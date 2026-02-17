@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Procoon Land Acquisition - Professional Land Purchase System">
+    <meta name="author" content="Procoon Studio">
+    <title>Land Acquisition - Procoon Property Tycoon</title>
+
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="../css/dashboard.css">
+    <link rel="stylesheet" href="../css/buy-land.css">
+</head>
+<body>
+    <!-- ===========================================
+         APPLICATION WINDOW
+    ============================================ -->
+    <div class="app-window">
+        <!-- ===========================================
+             WINDOW TITLE BAR
+        ============================================ -->
+        <div class="window-titlebar">
+            <div class="window-controls">
+                <button class="window-control close" aria-label="Close application"></button>
+                <button class="window-control minimize" aria-label="Minimize application"></button>
+                <button class="window-control maximize" aria-label="Maximize application"></button>
+            </div>
+            <div class="window-title">Land Acquisition System</div>
+        </div>
+
+        <!-- ===========================================
+             APPLICATION CONTENT
+        ============================================ -->
+        <div class="app-content">
+            <!-- ===========================================
+                 TOP STATUS BAR
+            ============================================ -->
+            <div class="top-container">
+                <button type="button" class="back-btn" onclick="location.href='assets.html'" aria-label="Return to assets page">
+                    ← Assets
+                </button>
+
+                <div class="company-text">
+                    <h1 id="companyName">Company</h1>
+                    <p id="balance">Rp 0</p>
+                </div>
+
+                <div class="time-control">
+                    <div class="time-box">
+                        <span>In-Game Time</span>
+                        <strong id="gameTime">-</strong>
+                    </div>
+                    <button type="button" id="timeToggle" onclick="toggleTime()" class="time-toggle" aria-label="Toggle game time">
+                        ⏸️ Pause
+                    </button>
+                </div>
+            </div>
+
+            <!-- ===========================================
+                 BUY LAND CONTENT LAYOUT
+            ============================================ -->
+            <div class="buy-land-layout">
+                <!-- ===========================================
+                     PURCHASE FORM PANEL
+                ============================================ -->
+                <div class="buy-card">
+                    <div class="buy-card-header">
+                        <h2>Land Purchase Form</h2>
+                    </div>
+
+                    <div class="buy-card-content">
+                        <div class="form-group">
+                            <label for="citySelect">City</label>
+                            <select id="citySelect" aria-label="Select city for land purchase"></select>
+                        </div>
+
+                        <div id="marketInfo" class="market-info" aria-live="polite">
+                            <span>Market:</span>
+                            <strong id="marketCycle">-</strong>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="landSize">Land Size (hectare)</label>
+                            <input id="landSize" type="number" min="0.1" step="0.1" placeholder="e.g. 1.5" aria-label="Enter land size in hectares">
+                        </div>
+
+                        <div class="price-box">
+                            <div class="price-item">
+                                <span>Price / m²</span>
+                                <strong id="pricePerM2">Rp 0</strong>
+                            </div>
+                            <div class="price-item">
+                                <span>Total Cost</span>
+                                <strong id="totalCost">Rp 0</strong>
+                            </div>
+                        </div>
+
+                        <div id="priceBreakdown" class="price-breakdown" aria-live="polite"></div>
+                        <div id="cashImpact" class="cash-impact" aria-live="polite"></div>
+
+                        <button type="button" class="confirm-btn" onclick="confirmBuyLand()" aria-label="Confirm land purchase">
+                            Confirm Purchase
+                        </button>
+                    </div>
+                </div>
+
+                <!-- ===========================================
+                     SIDE PANEL
+                ============================================ -->
+                <div class="buy-land-side">
+                    <div class="side-header">
+                        <h3>Market Analysis</h3>
+                    </div>
+                    <div class="side-content">
+                        <!-- Future market analysis content will go here -->
+                        <div class="roi-box" style="display: none;" id="roiBox"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notifications -->
+    <div id="toastContainer" class="toast-container" aria-live="polite" aria-atomic="true"></div>
+
+    <!-- JavaScript -->
+    <script src="../js/gameState.js"></script>
+    <script src="../js/gameUtils.js"></script>
+    <script src="../js/timeSystem.js"></script>
+    <script src="../js/assets.js"></script>
+    <script src="../js/buyLand.js"></script>
+</body>
+</html>

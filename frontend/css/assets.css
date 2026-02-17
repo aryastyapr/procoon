@@ -1,0 +1,1221 @@
+/* ===========================================
+   ASSETS PAGE - PROFESSIONAL ASSET MANAGEMENT
+=============================================== */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #0a0e27 0%, #020617 50%, #000814 100%);
+    font-family: 'Inter', 'Space Grotesk', sans-serif;
+    color: #e5e7eb;
+    overflow-x: hidden;
+    position: relative;
+}
+
+body::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+        radial-gradient(circle at 20% 80%, rgba(251, 191, 36, 0.08) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(34, 197, 94, 0.08) 0%, transparent 50%),
+        radial-gradient(circle at 40% 40%, rgba(239, 68, 68, 0.05) 0%, transparent 50%);
+    pointer-events: none;
+}
+
+/* ===========================================
+   APPLICATION WINDOW
+=============================================== */
+.app-window {
+    margin: 20px;
+    min-height: calc(100vh - 40px);
+    background: linear-gradient(145deg, rgba(15, 23, 42, 0.98), rgba(30, 41, 59, 0.95));
+    border-radius: 12px;
+    box-shadow:
+        0 32px 64px rgba(0, 0, 0, 0.8),
+        0 0 0 1px rgba(255, 255, 255, 0.05),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(148, 163, 184, 0.1);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+@media (max-width: 768px) {
+    .app-window {
+        backdrop-filter: none;
+        -webkit-backdrop-filter: none;
+    }
+}
+
+/* ===========================================
+   WINDOW TITLE BAR
+=============================================== */
+.window-titlebar {
+    height: 52px;
+    background: linear-gradient(90deg, rgba(2, 6, 23, 0.9), rgba(15, 23, 42, 0.8));
+    border-bottom: 1px solid rgba(148, 163, 184, 0.1);
+    display: flex;
+    align-items: center;
+    padding: 0 20px;
+    position: relative;
+    flex-shrink: 0;
+}
+
+.window-titlebar::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, rgba(251, 191, 36, 0.03), transparent 30%);
+}
+
+.window-controls {
+    display: flex;
+    gap: 8px;
+    margin-right: 16px;
+}
+
+.window-control {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    border: none;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+}
+
+.window-control.minimize { background: #fbbf24; }
+.window-control.maximize { background: #10b981; }
+.window-control.close { background: #ef4444; }
+
+.window-control:hover {
+    transform: scale(1.1);
+}
+
+.window-title {
+    flex: 1;
+    text-align: center;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    color: #94a3b8;
+    letter-spacing: 0.5px;
+}
+
+/* ===========================================
+   MAIN APPLICATION CONTENT
+=============================================== */
+.app-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+/* ===========================================
+   TOP STATUS BAR
+=============================================== */
+.top-container {
+    background: linear-gradient(135deg, rgba(2, 6, 23, 0.9), rgba(15, 23, 42, 0.8));
+    border-bottom: 1px solid rgba(148, 163, 184, 0.1);
+    padding: 20px 32px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 20px;
+    flex-shrink: 0;
+}
+
+.back-btn {
+    padding: 10px 16px;
+    border-radius: 8px;
+    border: 1px solid rgba(148, 163, 184, 0.2);
+    cursor: pointer;
+    background: linear-gradient(135deg, rgba(30, 41, 59, 0.8), rgba(51, 65, 85, 0.6));
+    color: #e5e7eb;
+    font-weight: 600;
+    font-size: 13px;
+    font-family: 'Inter', sans-serif;
+    transition: all 0.2s ease;
+}
+
+.back-btn:hover {
+    background: linear-gradient(135deg, rgba(51, 65, 85, 0.9), rgba(71, 85, 105, 0.7));
+    border-color: rgba(148, 163, 184, 0.4);
+    transform: translateY(-1px);
+}
+
+.company-text h1 {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 24px;
+    font-weight: 700;
+    background: linear-gradient(135deg, #fbbf24, #f59e0b);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin: 0;
+    letter-spacing: 0.5px;
+}
+
+.company-text p {
+    font-size: 14px;
+    font-weight: 600;
+    color: #fbbf24;
+    margin: 4px 0 0;
+    letter-spacing: 0.3px;
+}
+
+.time-control {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-left: auto;
+    flex-shrink: 0;
+}
+
+.time-box span {
+    font-size: 11px;
+    color: #94a3b8;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.time-box strong {
+    display: block;
+    font-size: 16px;
+    margin-top: 4px;
+    font-weight: 600;
+    color: #e5e7eb;
+}
+
+.time-toggle {
+    padding: 10px 16px;
+    border-radius: 8px;
+    border: 1px solid rgba(148, 163, 184, 0.2);
+    cursor: pointer;
+    background: linear-gradient(135deg, rgba(30, 41, 59, 0.8), rgba(51, 65, 85, 0.6));
+    color: #e5e7eb;
+    font-weight: 600;
+    font-size: 13px;
+    transition: all 0.2s ease;
+}
+
+.time-toggle:hover {
+    background: linear-gradient(135deg, rgba(51, 65, 85, 0.9), rgba(71, 85, 105, 0.7));
+    border-color: rgba(148, 163, 184, 0.4);
+    transform: translateY(-1px);
+}
+
+/* ===========================================
+   ASSETS CONTENT LAYOUT
+=============================================== */
+.assets-layout {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    padding: 32px;
+    overflow-y: auto;
+    scroll-behavior: smooth;
+}
+
+/* ===========================================
+   ASSET SUMMARY CARDS
+=============================================== */
+.asset-summary {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+    flex-shrink: 0;
+}
+
+.asset-card {
+    background: linear-gradient(135deg, rgba(15, 23, 42, 0.95), rgba(30, 41, 59, 0.8));
+    border-radius: 12px;
+    border: 1px solid rgba(148, 163, 184, 0.1);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3),
+                inset 0 0 0 1px rgba(255, 255, 255, 0.04);
+    padding: 24px;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.asset-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 100%;
+    background: linear-gradient(180deg, #fbbf24, #f59e0b);
+}
+
+.asset-card.resource {
+    border-left: 4px solid #fbbf24;
+}
+
+.asset-card:hover {
+    border-color: rgba(251, 191, 36, 0.3);
+    box-shadow: 0 12px 32px rgba(251, 191, 36, 0.15);
+    transform: translateY(-2px);
+}
+
+.asset-card h3 {
+    font-size: 12px;
+    font-weight: 700;
+    color: #94a3b8;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.asset-card span {
+    font-size: 24px;
+    font-weight: 700;
+    background: linear-gradient(135deg, #fbbf24, #f59e0b);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+/* ===========================================
+   ACTIONS BAR
+=============================================== */
+.assets-actions {
+    display: flex;
+    justify-content: flex-end;
+    padding: 20px 0;
+    border-bottom: 1px solid rgba(148, 163, 184, 0.1);
+    flex-shrink: 0;
+    gap: 12px;
+}
+
+.buy-land-btn {
+    padding: 12px 24px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    font-weight: 700;
+    font-size: 14px;
+    font-family: 'Inter', sans-serif;
+    background: linear-gradient(135deg, #facc15, #f59e0b);
+    color: #020617;
+    box-shadow: 0 4px 16px rgba(250, 204, 21, 0.3);
+    transition: all 0.2s ease;
+}
+
+.buy-land-btn:hover {
+    background: linear-gradient(135deg, #f59e0b, #d97706);
+    box-shadow: 0 8px 24px rgba(250, 204, 21, 0.4);
+    transform: translateY(-1px);
+}
+
+/* ===========================================
+   ASSETS SECTIONS
+=============================================== */
+.assets-section {
+    background: linear-gradient(135deg, rgba(15, 23, 42, 0.95), rgba(30, 41, 59, 0.8));
+    border-radius: 12px;
+    border: 1px solid rgba(148, 163, 184, 0.1);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3),
+                inset 0 0 0 1px rgba(255, 255, 255, 0.04);
+    overflow: hidden;
+    flex-shrink: 0;
+}
+
+.section-header {
+    padding: 24px 24px 20px;
+    border-bottom: 1px solid rgba(148, 163, 184, 0.1);
+    background: linear-gradient(90deg, rgba(2, 6, 23, 0.5), transparent);
+}
+
+.section-header h2 {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    color: #e5e7eb;
+    margin: 0;
+}
+
+.section-content {
+    padding: 20px;
+    min-height: 200px;
+}
+
+/* ===========================================
+   ASSETS LIST
+=============================================== */
+.assets-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 16px;
+}
+
+.assets-empty {
+    grid-column: 1 / -1;
+    padding: 48px;
+    border-radius: 14px;
+    background: rgba(15, 23, 42, 0.6);
+    border: 2px dashed rgba(148, 163, 184, 0.2);
+    text-align: center;
+    color: #94a3b8;
+    font-size: 15px;
+}
+
+/* ===========================================
+   PROPERTY CARDS
+=============================================== */
+.property-card {
+    background: linear-gradient(135deg, rgba(2, 6, 23, 0.8), rgba(15, 23, 42, 0.6));
+    border-radius: 8px;
+    border: 1px solid rgba(148, 163, 184, 0.1);
+    padding: 20px;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.property-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(251, 191, 36, 0.1), transparent);
+    transition: left 0.6s ease;
+}
+
+.property-card:hover::before {
+    left: 100%;
+}
+
+.property-card:hover {
+    border-color: rgba(251, 191, 36, 0.3);
+    box-shadow: 0 8px 24px rgba(251, 191, 36, 0.15);
+    transform: translateY(-2px);
+}
+
+.property-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 16px;
+}
+
+.property-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: #e5e7eb;
+    margin: 0;
+}
+
+.property-type {
+    font-size: 12px;
+    color: #94a3b8;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.property-details {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.property-detail {
+    display: flex;
+    flex-direction: column;
+}
+
+.property-detail span {
+    font-size: 11px;
+    color: #94a3b8;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.property-detail strong {
+    font-size: 14px;
+    font-weight: 600;
+    color: #e5e7eb;
+    margin-top: 4px;
+}
+
+.property-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.property-btn {
+    flex: 1;
+    padding: 8px 12px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 12px;
+    font-family: 'Inter', sans-serif;
+    transition: all 0.2s ease;
+}
+
+.btn-sell {
+    background: linear-gradient(135deg, rgba(239, 68, 68, 0.8), rgba(220, 38, 38, 0.6));
+    color: #e5e7eb;
+}
+
+.btn-sell:hover {
+    background: linear-gradient(135deg, rgba(220, 38, 38, 0.9), rgba(185, 28, 28, 0.7));
+    transform: translateY(-1px);
+}
+
+.btn-rent {
+    background: linear-gradient(135deg, rgba(34, 197, 94, 0.8), rgba(22, 163, 74, 0.6));
+    color: #e5e7eb;
+}
+
+.btn-rent:hover {
+    background: linear-gradient(135deg, rgba(22, 163, 74, 0.9), rgba(21, 128, 61, 0.7));
+    transform: translateY(-1px);
+}
+
+/* ===========================================
+   LAND CARDS
+=============================================== */
+.land-card {
+    background: linear-gradient(135deg, rgba(2, 6, 23, 0.8), rgba(15, 23, 42, 0.6));
+    border-radius: 8px;
+    border: 1px solid rgba(148, 163, 184, 0.1);
+    padding: 20px;
+    transition: all 0.3s ease;
+}
+
+.land-card:hover {
+    border-color: rgba(251, 191, 36, 0.3);
+    box-shadow: 0 8px 24px rgba(251, 191, 36, 0.15);
+    transform: translateY(-2px);
+}
+
+.land-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.land-location {
+    font-size: 16px;
+    font-weight: 700;
+    color: #e5e7eb;
+}
+
+.land-area {
+    font-size: 14px;
+    color: #94a3b8;
+    font-weight: 500;
+}
+
+.land-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+
+.land-stat {
+    text-align: center;
+}
+
+.land-stat span {
+    font-size: 11px;
+    color: #94a3b8;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    display: block;
+}
+
+.land-stat strong {
+    font-size: 16px;
+    font-weight: 700;
+    color: #e5e7eb;
+    display: block;
+    margin-top: 4px;
+}
+
+.land-sell-section {
+    margin-bottom: 14px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.land-sell-section h4 {
+    margin: 0 0 6px 0;
+    font-size: 13px;
+    color: #e5e7eb;
+}
+
+.land-sell-section .row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    color: #cbd5f5;
+    margin-bottom: 4px;
+}
+
+.land-sell-section .row.strong {
+    font-weight: 600;
+    color: #ffffff;
+}
+
+.land-sell-section small {
+    font-size: 11px;
+    opacity: 0.6;
+}
+
+.land-sell-section.cfo p {
+    font-size: 12px;
+    font-style: italic;
+    opacity: 0.85;
+}
+
+/* ===========================================
+   ASSET ACTIONS (Sell/Rent buttons in cards)
+=============================================== */
+.asset-actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 18px;
+    flex-wrap: wrap;
+}
+
+.asset-actions button {
+    flex: 1 1 auto;
+    min-width: 120px;
+    padding: 12px 16px;
+    border-radius: 10px;
+    border: 1px solid rgba(148, 163, 184, 0.2);
+    cursor: pointer;
+    background: linear-gradient(135deg, rgba(30, 41, 59, 0.8), rgba(51, 65, 85, 0.6));
+    color: #e5e7eb;
+    font-weight: 700;
+    font-size: 13px;
+    transition: all 0.2s ease;
+}
+
+.asset-actions button:hover {
+    background: linear-gradient(135deg, rgba(51, 65, 85, 0.9), rgba(71, 85, 105, 0.7));
+    border-color: rgba(148, 163, 184, 0.4);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
+}
+
+.asset-actions .sell-btn,
+.asset-actions .sell-land-btn {
+    background: linear-gradient(135deg, rgba(248, 113, 113, 0.2), rgba(239, 68, 68, 0.1));
+    color: #fca5a5;
+    border-color: rgba(248, 113, 113, 0.2);
+}
+
+.asset-actions .sell-btn:hover,
+.asset-actions .sell-land-btn:hover {
+    background: linear-gradient(135deg, rgba(248, 113, 113, 0.3), rgba(239, 68, 68, 0.2));
+    border-color: rgba(248, 113, 113, 0.4);
+}
+
+.asset-status {
+    margin-top: 14px;
+    padding: 12px;
+    border-radius: 10px;
+    background: rgba(251, 191, 36, 0.1);
+    border: 1px solid rgba(251, 191, 36, 0.2);
+    font-size: 13px;
+    font-weight: 600;
+    color: #fbbf24;
+    line-height: 1.5;
+}
+
+.asset-status button {
+    margin-left: 8px;
+    padding: 4px 8px;
+    font-size: 10px;
+    border-radius: 6px;
+    border: none;
+    background: rgba(248, 113, 113, 0.2);
+    color: #fca5a5;
+    cursor: pointer;
+}
+
+.asset-status button:hover {
+    background: rgba(248, 113, 113, 0.4);
+}
+
+/* ===========================================
+   MODALS
+=============================================== */
+.build-modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(2, 6, 23, 0.9);
+    backdrop-filter: blur(12px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 3000;
+    animation: modalFadeIn 0.3s ease;
+}
+
+.build-modal.hidden {
+    display: none !important;
+}
+
+@keyframes modalFadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.build-modal-content {
+    position: relative;
+    background: linear-gradient(145deg, rgba(15, 23, 42, 0.98), rgba(30, 41, 59, 0.95));
+    border-radius: 12px;
+    border: 1px solid rgba(148, 163, 184, 0.1);
+    box-shadow:
+        0 32px 64px rgba(0, 0, 0, 0.8),
+        0 0 0 1px rgba(255, 255, 255, 0.05);
+    max-width: 500px;
+    width: 90%;
+    max-height: 85vh;
+    overflow-y: auto;
+    animation: modalSlideIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes modalSlideIn {
+    from {
+        transform: translateY(20px) scale(0.95);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0) scale(1);
+        opacity: 1;
+    }
+}
+
+.modal-header {
+    padding: 24px 32px 20px;
+    border-bottom: 1px solid rgba(148, 163, 184, 0.1);
+    background: linear-gradient(90deg, rgba(2, 6, 23, 0.5), transparent);
+}
+
+.modal-title {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 20px;
+    font-weight: 700;
+    color: #e5e7eb;
+    text-align: center;
+    margin: 0;
+}
+
+.modal-body {
+    padding: 32px;
+}
+
+.form-group {
+    margin-bottom: 24px;
+}
+
+.form-group label {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    color: #94a3b8;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 8px;
+}
+
+.form-group input {
+    width: 100%;
+    height: 44px;
+    padding: 0 16px;
+    border-radius: 8px;
+    border: 1px solid rgba(148, 163, 184, 0.2);
+    outline: none;
+    background: rgba(2, 6, 23, 0.8);
+    color: #e5e7eb;
+    font-size: 14px;
+    font-family: 'Inter', sans-serif;
+    transition: all 0.2s ease;
+}
+
+.form-group input:focus {
+    border-color: rgba(251, 191, 36, 0.5);
+    box-shadow: 0 0 0 3px rgba(251, 191, 36, 0.1);
+    background: rgba(2, 6, 23, 0.95);
+}
+
+.modal-actions {
+    padding: 20px 32px 32px;
+    border-top: 1px solid rgba(148, 163, 184, 0.1);
+    display: flex;
+    gap: 12px;
+}
+
+.modal-actions button {
+    flex: 1;
+    height: 44px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    font-weight: 600;
+    font-family: 'Inter', sans-serif;
+    transition: all 0.2s ease;
+}
+
+.btn-secondary {
+    background: linear-gradient(135deg, rgba(51, 65, 85, 0.8), rgba(71, 85, 105, 0.6));
+    color: #e5e7eb;
+    border: 1px solid rgba(148, 163, 184, 0.2);
+}
+
+.btn-secondary:hover {
+    background: linear-gradient(135deg, rgba(71, 85, 105, 0.9), rgba(100, 116, 139, 0.7));
+    border-color: rgba(148, 163, 184, 0.4);
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #fbbf24, #f59e0b);
+    color: #020617;
+    box-shadow: 0 4px 16px rgba(251, 191, 36, 0.3);
+}
+
+.btn-primary:hover {
+    background: linear-gradient(135deg, #f59e0b, #d97706);
+    box-shadow: 0 8px 24px rgba(251, 191, 36, 0.4);
+    transform: translateY(-1px);
+}
+
+.modal-close {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(148, 163, 184, 0.1);
+    color: #94a3b8;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    transition: all 0.2s ease;
+}
+
+.modal-close:hover {
+    background: rgba(239, 68, 68, 0.2);
+    color: #ef4444;
+}
+
+#assetModalTitle {
+    font-size: 18px;
+}
+
+#assetPriceInput {
+    margin-bottom: 14px;
+}
+
+#assetPriceInput:focus {
+    outline: none;
+    border-color: rgba(251, 191, 36, 0.5);
+    box-shadow: 0 0 0 3px rgba(251, 191, 36, 0.1);
+}
+
+.modal-actions button:last-child {
+    background: linear-gradient(135deg, #fbbf24, #f59e0b);
+    color: #020617;
+    font-weight: 700;
+}
+
+.modal-actions button:last-child:hover {
+    box-shadow: 0 8px 20px rgba(251, 191, 36, 0.3);
+}
+
+/* Rent / Sell modal content */
+.rent-simulation {
+    margin-top: 16px;
+    padding: 16px;
+    border-radius: 12px;
+    background: rgba(2, 6, 23, 0.6);
+    border: 1px solid rgba(148, 163, 184, 0.1);
+    font-size: 13px;
+    line-height: 1.6;
+}
+
+.rent-simulation p {
+    margin: 8px 0;
+    color: #cbd5f5;
+}
+
+.rent-simulation b {
+    color: #e5e7eb;
+    font-weight: 700;
+}
+
+.rent-simulation hr {
+    margin: 12px 0;
+    border: none;
+    border-top: 1px solid rgba(148, 163, 184, 0.15);
+}
+
+.sell-summary {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.sell-section {
+    padding: 14px;
+    border-radius: 10px;
+    background: rgba(2, 6, 23, 0.6);
+    border: 1px solid rgba(148, 163, 184, 0.1);
+}
+
+.sell-section p {
+    margin: 0;
+    font-size: 13px;
+    color: #94a3b8;
+}
+
+.sell-section h3 {
+    margin: 6px 0;
+    font-size: 20px;
+    font-weight: 700;
+    color: #e5e7eb;
+}
+
+.sell-options {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-top: 14px;
+}
+
+.sell-btn {
+    cursor: pointer;
+    border: none;
+    border-radius: 10px;
+    padding: 16px 12px;
+    font-weight: 700;
+    font-size: 13px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+}
+
+.sell-btn.quick {
+    background: linear-gradient(135deg, #fde047, #facc15);
+    color: #1a1a1a;
+    box-shadow: 0 4px 12px rgba(250, 204, 21, 0.2);
+}
+
+.sell-btn.market {
+    background: linear-gradient(135deg, #e5e7eb, #cbd5f5);
+    color: #020617;
+    box-shadow: 0 4px 12px rgba(229, 231, 235, 0.2);
+}
+
+.sell-btn.premium {
+    background: linear-gradient(135deg, #fde047, #facc15);
+    color: #020617;
+    box-shadow: 0 4px 12px rgba(251, 191, 36, 0.2);
+}
+
+.sell-btn:hover {
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+}
+
+.sell-btn small {
+    font-size: 11px;
+    font-weight: 600;
+    opacity: 0.8;
+}
+
+.sell-confirm {
+    text-align: center;
+}
+
+.sell-confirm h3 {
+    margin-bottom: 14px;
+    font-size: 16px;
+}
+
+.sell-confirm h2 {
+    font-size: 28px;
+    font-weight: 800;
+    margin: 20px 0;
+    background: linear-gradient(135deg, #fbbf24, #f59e0b);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+/* ===========================================
+   TOAST NOTIFICATIONS
+=============================================== */
+.toast-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 4000;
+    pointer-events: none;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.toast {
+    background: linear-gradient(135deg, rgba(15, 23, 42, 0.98), rgba(30, 41, 59, 0.95));
+    border-radius: 12px;
+    padding: 14px 18px;
+    border: 1px solid rgba(148, 163, 184, 0.2);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.4);
+    pointer-events: auto;
+    animation: toastSlideIn 0.3s ease;
+    color: #e5e7eb;
+    font-size: 14px;
+    font-weight: 500;
+    max-width: 320px;
+    word-wrap: break-word;
+    cursor: pointer;
+    transition: transform 0.2s ease, opacity 0.3s ease;
+}
+
+.toast:hover {
+    transform: translateX(-4px);
+}
+
+/* Toast Types */
+.toast-success {
+    border-color: rgba(34, 197, 94, 0.3);
+    background: linear-gradient(135deg, rgba(5, 50, 26, 0.95), rgba(15, 70, 40, 0.9));
+    color: #86efac;
+}
+
+.toast-warning {
+    border-color: rgba(251, 146, 60, 0.3);
+    background: linear-gradient(135deg, rgba(71, 48, 6, 0.95), rgba(92, 64, 12, 0.9));
+    color: #fdba74;
+}
+
+.toast-error {
+    border-color: rgba(239, 68, 68, 0.3);
+    background: linear-gradient(135deg, rgba(80, 7, 25, 0.95), rgba(110, 10, 35, 0.9));
+    color: #fca5a5;
+}
+
+.toast-info {
+    border-color: rgba(59, 130, 246, 0.3);
+    background: linear-gradient(135deg, rgba(7, 46, 92, 0.95), rgba(10, 65, 130, 0.9));
+    color: #93c5fd;
+}
+
+.toast-fade-out {
+    animation: toastSlideOut 0.3s ease forwards;
+}
+
+@keyframes toastSlideIn {
+    from {
+        transform: translateX(400px);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes toastSlideOut {
+    from {
+        transform: translateX(0);
+        opacity: 1;
+    }
+    to {
+        transform: translateX(400px);
+        opacity: 0;
+    }
+}
+
+/* ===========================================
+   RESPONSIVE DESIGN
+=============================================== */
+@media (max-width: 1400px) {
+    .asset-summary {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 1200px) {
+    .assets-list {
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    }
+}
+
+@media (max-width: 768px) {
+    .app-window {
+        margin: 10px;
+        min-height: calc(100vh - 20px);
+    }
+
+    .top-container {
+        padding: 16px 20px;
+        gap: 12px;
+    }
+
+    .assets-layout {
+        padding: 20px 16px;
+        gap: 20px;
+    }
+
+    .asset-summary {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+
+    .property-actions {
+        flex-direction: column;
+    }
+}
+
+@media (max-width: 480px) {
+    .app-window {
+        margin: 5px;
+        min-height: calc(100vh - 10px);
+        border-radius: 8px;
+    }
+
+    .window-titlebar {
+        padding: 0 12px;
+        height: 44px;
+    }
+
+    .window-title {
+        font-size: 12px;
+    }
+
+    .top-container {
+        padding: 12px 16px;
+        flex-direction: column;
+        gap: 12px;
+        align-items: stretch;
+    }
+
+    .company-text h1 {
+        font-size: 16px;
+    }
+
+    .company-text p {
+        font-size: 14px;
+    }
+
+    .time-control {
+        margin-left: 0;
+        flex-direction: column;
+        gap: 8px;
+        align-items: center;
+    }
+
+    .assets-layout {
+        padding: 16px 12px;
+        gap: 16px;
+    }
+
+    .asset-summary {
+        gap: 12px;
+    }
+
+    .asset-card {
+        padding: 16px;
+        border-radius: 10px;
+    }
+
+    .asset-card h3 {
+        font-size: 14px;
+        margin-bottom: 8px;
+    }
+
+    .asset-card span {
+        font-size: 22px;
+    }
+
+    .assets-actions {
+        padding: 16px 0;
+    }
+
+    .buy-land-btn {
+        padding: 12px 20px;
+        font-size: 14px;
+    }
+
+    .section-header {
+        padding: 16px 12px;
+    }
+
+    .section-header h2 {
+        font-size: 16px;
+    }
+
+    .section-content {
+        padding: 12px;
+    }
+
+    .assets-list {
+        gap: 12px;
+    }
+
+    .build-modal-content {
+        width: 90%;
+        max-width: 320px;
+    }
+
+    .modal-body {
+        padding: 24px 20px;
+    }
+
+    .modal-actions {
+        padding: 16px 20px 24px;
+        flex-direction: column;
+    }
+}
+
+/* ===========================================
+   ACCESSIBILITY
+=============================================== */
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}

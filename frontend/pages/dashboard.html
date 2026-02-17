@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Procoon Dashboard - Property Tycoon Command Center">
+    <meta name="author" content="Procoon Studio">
+    <title>Dashboard - Procoon Property Tycoon</title>
+
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="../css/dashboard.css">
+</head>
+<body>
+    <!-- Main Application Window -->
+    <div class="app-window">
+        <!-- Window Title Bar -->
+        <header class="window-titlebar">
+            <div class="window-controls">
+                <button type="button" class="window-control close" aria-label="Close application"></button>
+                <button type="button" class="window-control minimize" aria-label="Minimize window"></button>
+                <button type="button" class="window-control maximize" aria-label="Maximize window"></button>
+            </div>
+            <span class="window-title">Procoon Property Tycoon — Command Center</span>
+        </header>
+
+        <!-- Application Content -->
+        <div class="app-content">
+            <!-- Top Status Bar -->
+            <header class="top-container">
+                <div class="company-info">
+                    <div class="left-controls">
+                        <button type="button" class="hamburger" onclick="toggleSystemMenu()" aria-label="Open system menu">
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                        </button>
+                        <button type="button" class="info-btn" aria-label="Company information">
+                            ℹ️
+                        </button>
+                    </div>
+
+                    <div class="company-text">
+                        <h1 id="companyName">Company Name</h1>
+                        <p id="balance">Rp 0</p>
+                    </div>
+                </div>
+
+                <div class="time-control">
+                    <div class="time-box">
+                        <span>In-Game Time</span>
+                        <strong id="gameTime">Day 1 — 08:00</strong>
+                    </div>
+                    <button type="button" id="timeToggle" class="time-toggle" aria-label="Toggle game time">
+                        ⏸️ Pause
+                    </button>
+                </div>
+            </header>
+
+            <!-- Main Dashboard Content -->
+            <main class="dashboard-content">
+                <!-- Welcome & Quick Stats -->
+                <section class="dashboard-hero" aria-labelledby="welcome-title">
+                    <div class="hero-welcome">
+                        <h2 id="welcome-title">Welcome back, <span id="ceoGreeting">CEO</span></h2>
+                        <p class="hero-subtitle">Your property empire at a glance</p>
+                    </div>
+
+                    <div class="quick-stats">
+                        <div class="quick-stat-card cash">
+                            <span class="stat-icon">💰</span>
+                            <div class="stat-content">
+                                <span class="stat-label">Cash</span>
+                                <strong class="stat-value" id="quickCash">Rp 0</strong>
+                            </div>
+                        </div>
+                        <div class="quick-stat-card assets">
+                            <span class="stat-icon">🏠</span>
+                            <div class="stat-content">
+                                <span class="stat-label">Properties</span>
+                                <strong class="stat-value" id="quickProperties">0</strong>
+                            </div>
+                        </div>
+                        <div class="quick-stat-card land">
+                            <span class="stat-icon">🌍</span>
+                            <div class="stat-content">
+                                <span class="stat-label">Land (ha)</span>
+                                <strong class="stat-value" id="quickLand">0</strong>
+                            </div>
+                        </div>
+                        <div class="quick-stat-card construction">
+                            <span class="stat-icon">🏗️</span>
+                            <div class="stat-content">
+                                <span class="stat-label">Building</span>
+                                <strong class="stat-value" id="quickConstruction">0</strong>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Feature Navigation -->
+                <section class="feature-section" aria-labelledby="core-features-title">
+                    <h3 id="core-features-title" class="section-title">Core Operations</h3>
+                    <div class="feature-container">
+                        <button type="button" class="feature-card accent-build" onclick="goTo('build.html')" aria-label="Go to Build page">
+                            <span class="icon">🏗️</span>
+                            <span class="label">Build</span>
+                            <span class="desc">Construct & expand</span>
+                        </button>
+                        <button type="button" class="feature-card accent-assets" onclick="goTo('assets.html')" aria-label="Go to Assets page">
+                            <span class="icon">🧱</span>
+                            <span class="label">Assets</span>
+                            <span class="desc">Manage properties</span>
+                        </button>
+                        <button type="button" class="feature-card accent-finance" onclick="goTo('finance.html')" aria-label="Go to Finance page">
+                            <span class="icon">🏦</span>
+                            <span class="label">Finance</span>
+                            <span class="desc">Cashflow & reports</span>
+                        </button>
+                        <button type="button" class="feature-card accent-map" onclick="goTo('map.html')" aria-label="Go to Map page">
+                            <span class="icon">🗺️</span>
+                            <span class="label">Map</span>
+                            <span class="desc">City zones & land</span>
+                        </button>
+                        <button type="button" class="feature-card accent-company" onclick="goTo('company.html')" aria-label="Go to Company page">
+                            <span class="icon">🏢</span>
+                            <span class="label">Company</span>
+                            <span class="desc">Profile & reputation</span>
+                        </button>
+                    </div>
+                </section>
+
+                <section class="feature-section" aria-labelledby="management-features-title">
+                    <h3 id="management-features-title" class="section-title">Management</h3>
+                    <div class="feature-container">
+                        <button type="button" class="feature-card accent-employee" onclick="goTo('employees.html')" aria-label="Go to Employees page">
+                            <span class="icon">👷</span>
+                            <span class="label">Employees</span>
+                            <span class="desc">Hire & manage</span>
+                        </button>
+                        <button type="button" class="feature-card accent-invest" onclick="goTo('investment.html')" aria-label="Go to Investment page">
+                            <span class="icon">💼</span>
+                            <span class="label">Investment</span>
+                            <span class="desc">Funding & loans</span>
+                        </button>
+                        <button type="button" class="feature-card accent-market" onclick="goTo('market.html')" aria-label="Go to Market page">
+                            <span class="icon">📈</span>
+                            <span class="label">Market</span>
+                            <span class="desc">Demand & trends</span>
+                        </button>
+                        <button type="button" class="feature-card accent-maintenance" onclick="goTo('maintenance.html')" aria-label="Go to Maintenance page">
+                            <span class="icon">🛠️</span>
+                            <span class="label">Maintenance</span>
+                            <span class="desc">Building condition</span>
+                        </button>
+                        <button type="button" class="feature-card accent-policy" onclick="goTo('policy.html')" aria-label="Go to Policy page">
+                            <span class="icon">🏛️</span>
+                            <span class="label">Policy</span>
+                            <span class="desc">Taxes & permits</span>
+                        </button>
+                    </div>
+                </section>
+
+                <section class="feature-section" aria-labelledby="meta-features-title">
+                    <h3 id="meta-features-title" class="section-title">Progress & Analytics</h3>
+                    <div class="feature-container">
+                        <button type="button" class="feature-card accent-achievement" onclick="goTo('achievement.html')" aria-label="Go to Achievement page">
+                            <span class="icon">🏆</span>
+                            <span class="label">Achievement</span>
+                            <span class="desc">Milestones</span>
+                        </button>
+                        <button type="button" class="feature-card accent-stats" onclick="goTo('statistics.html')" aria-label="Go to Statistics page">
+                            <span class="icon">📊</span>
+                            <span class="label">Statistics</span>
+                            <span class="desc">Growth & analytics</span>
+                        </button>
+                    </div>
+                </section>
+
+                <!-- Active Listings (Sell Summary) -->
+                <section class="sell-summary-container" aria-labelledby="sell-summary-title">
+                    <h2 id="sell-summary-title" class="sell-summary-title">Active Listings</h2>
+                    <p class="sell-summary-hint">Properties and land currently on the market</p>
+                    <div class="sell-summary-grid">
+                        <div class="sell-card">
+                            <span class="label">Properties Listed</span>
+                            <strong id="propertiesListed">0</strong>
+                        </div>
+                        <div class="sell-card">
+                            <span class="label">Land Listed (ha)</span>
+                            <strong id="landListed">0.00</strong>
+                        </div>
+                        <div class="sell-card highlight">
+                            <span class="label">Total Est. Value</span>
+                            <strong id="totalEstValue">Rp 0</strong>
+                        </div>
+                    </div>
+                </section>
+            </main>
+        </div>
+    </div>
+
+    <!-- Company Information Modal -->
+    <div id="companyInfoModal" class="system-modal hidden" role="dialog" aria-modal="true" aria-labelledby="company-info-title">
+        <div class="system-card">
+            <header class="modal-header">
+                <h3 id="company-info-title" class="modal-title">Company Information</h3>
+            </header>
+
+            <div class="modal-body">
+                <div class="info-row">
+                    <span>Company</span>
+                    <strong id="infoCompanyName">-</strong>
+                </div>
+                <div class="info-row">
+                    <span>CEO</span>
+                    <strong id="infoCeoName">-</strong>
+                </div>
+                <div class="info-row">
+                    <span>Mode</span>
+                    <strong id="infoMode">Sandbox</strong>
+                </div>
+            </div>
+
+            <footer class="modal-footer">
+                <button type="button" class="system-action" onclick="toggleCompanyInfo()">Close</button>
+            </footer>
+        </div>
+    </div>
+
+    <!-- System Menu Modal -->
+    <div id="systemMenu" class="system-modal hidden" role="dialog" aria-modal="true" aria-labelledby="system-menu-title">
+        <div class="system-card">
+            <button class="close-btn" onclick="toggleSystemMenu()">✕</button>
+            <header class="modal-header">
+                <h3 id="system-menu-title" class="modal-title">System Menu</h3>
+            </header>
+
+            <div class="modal-body system-actions">
+                <button type="button" class="system-action" onclick="saveGame()" aria-label="Save game">💾 Save Game</button>
+                <button type="button" class="system-action" onclick="goToMainMenu()" aria-label="Return to main menu">🏠 Main Menu</button>
+                <button type="button" class="system-action" aria-label="Open settings">⚙️ Settings</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notifications -->
+    <div id="toastContainer" class="toast-container" aria-live="polite" aria-atomic="true"></div>
+
+    <!-- JavaScript -->
+    <script src="../js/gameState.js"></script>
+    <script src="../js/gameUtils.js"></script>
+    <script src="../js/timeSystem.js"></script>
+    <script src="../js/dashboard.js"></script>
+</body>
+</html>

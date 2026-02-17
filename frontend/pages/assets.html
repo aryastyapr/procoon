@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Procoon Assets - Professional Asset Management System">
+    <meta name="author" content="Procoon Studio">
+    <title>Asset Management - Procoon Property Tycoon</title>
+
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="../css/dashboard.css">
+    <link rel="stylesheet" href="../css/assets.css">
+</head>
+<body>
+    <!-- ===========================================
+         APPLICATION WINDOW
+    ============================================ -->
+    <div class="app-window">
+        <!-- ===========================================
+             WINDOW TITLE BAR
+        ============================================ -->
+        <div class="window-titlebar">
+            <div class="window-controls">
+                <button class="window-control close" aria-label="Close application"></button>
+                <button class="window-control minimize" aria-label="Minimize application"></button>
+                <button class="window-control maximize" aria-label="Maximize application"></button>
+            </div>
+            <div class="window-title">Asset Management System</div>
+        </div>
+
+        <!-- ===========================================
+             APPLICATION CONTENT
+        ============================================ -->
+        <div class="app-content">
+            <!-- ===========================================
+                 TOP STATUS BAR
+            ============================================ -->
+            <div class="top-container">
+                <button type="button" class="back-btn" onclick="goBack()" aria-label="Return to dashboard">
+                    ← Dashboard
+                </button>
+
+                <div class="company-text">
+                    <h1 id="companyName">Company</h1>
+                    <p id="balance">Rp 0</p>
+                </div>
+
+                <div class="time-control">
+                    <div class="time-box">
+                        <span>In-Game Time</span>
+                        <strong id="gameTime">-</strong>
+                    </div>
+                    <button type="button" id="timeToggle" onclick="toggleTime()" class="time-toggle" aria-label="Toggle game time">
+                        ⏸️ Pause
+                    </button>
+                </div>
+            </div>
+
+            <!-- ===========================================
+                 ASSETS CONTENT LAYOUT
+            ============================================ -->
+            <div class="assets-layout">
+                <!-- ===========================================
+                     ASSET SUMMARY CARDS
+                ============================================ -->
+                <section class="asset-summary" aria-labelledby="summary-title">
+                    <h2 id="summary-title" class="sr-only">Asset Summary</h2>
+
+                    <div class="asset-card resource">
+                        <h3>💰 Cash</h3>
+                        <span id="assetCash">Rp 0</span>
+                    </div>
+
+                    <div class="asset-card resource">
+                        <h3>🌍 Total Land</h3>
+                        <span id="assetLandTotal">0 ha</span>
+                    </div>
+
+                    <div class="asset-card resource">
+                        <h3>🏗️ Land Used</h3>
+                        <span id="assetLandUsed">0 ha</span>
+                    </div>
+
+                    <div class="asset-card resource">
+                        <h3>✅ Land Available</h3>
+                        <span id="assetLandAvailable">0 ha</span>
+                    </div>
+                </section>
+
+                <!-- ===========================================
+                     ACTIONS BAR
+                ============================================ -->
+                <section class="assets-actions" aria-labelledby="actions-title">
+                    <h2 id="actions-title" class="sr-only">Asset Actions</h2>
+                    <button type="button" class="buy-land-btn system-action" onclick="location.href='buy-land.html'" aria-label="Buy additional land">
+                        🏞️ Buy Land
+                    </button>
+                </section>
+
+                <!-- ===========================================
+                     LAND BY LOCATION
+                ============================================ -->
+                <section class="assets-section land-location-section" aria-labelledby="land-title">
+                    <div class="section-header">
+                        <h2 id="land-title">Land by Location</h2>
+                    </div>
+                    <div class="section-content">
+                        <div id="landLocationList" class="assets-list" aria-live="polite"></div>
+                    </div>
+                </section>
+
+                <!-- ===========================================
+                     OWNED PROPERTIES
+                ============================================ -->
+                <section class="assets-section properties-section" aria-labelledby="properties-title">
+                    <div class="section-header">
+                        <h2 id="properties-title">Owned Properties</h2>
+                    </div>
+                    <div class="section-content">
+                        <!--
+                            IMPORTANT:
+                            assets.js will continue to render property cards as usual to #assetsList.
+                            In the NEXT STEP, we will ONLY INSERT Sell/Rent UI
+                            INSIDE THE CARD WITHOUT BREAKING THE STRUCTURE.
+                        -->
+                        <div id="assetsList" class="assets-list" aria-live="polite"></div>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===========================================
+         ASSET ACTION MODAL
+    ============================================ -->
+    <div id="assetModal" class="build-modal hidden" role="dialog" aria-modal="true" aria-labelledby="assetModalTitle">
+        <div class="build-modal-content">
+            <button class="modal-close" onclick="closeAssetModal()" aria-label="Close modal">×</button>
+
+            <div class="modal-header">
+                <h3 id="assetModalTitle" class="modal-title">Asset Action</h3>
+            </div>
+
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="assetPriceInput">Price per Unit</label>
+                    <input id="assetPriceInput" type="text" placeholder="5.000.000" aria-label="Enter price per unit">
+                </div>
+
+                <div id="assetModalBody"></div>
+            </div>
+
+            <div class="modal-actions" id="assetModalActions"></div>
+        </div>
+    </div>
+
+    <!-- ===========================================
+         TOAST NOTIFICATIONS
+    ============================================ -->
+    <div id="toastContainer" class="toast-container" aria-live="polite" aria-atomic="true"></div>
+
+    <!-- JavaScript -->
+    <script src="../js/gameState.js"></script>
+    <script src="../js/gameUtils.js"></script>
+    <script src="../js/timeSystem.js"></script>
+    <script src="../js/assets.js"></script>
+</body>
+</html>

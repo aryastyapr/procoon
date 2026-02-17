@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Procoon Build - Professional Construction Management">
+    <meta name="author" content="Procoon Studio">
+    <title>Construction Management - Procoon Property Tycoon</title>
+
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="../css/dashboard.css">
+    <link rel="stylesheet" href="../css/build.css">
+</head>
+<body>
+    <!-- ===========================================
+         APPLICATION WINDOW
+    ============================================ -->
+    <div class="app-window">
+        <!-- ===========================================
+             WINDOW TITLE BAR
+        ============================================ -->
+        <div class="window-titlebar">
+            <div class="window-controls">
+                <button class="window-control close" aria-label="Close application"></button>
+                <button class="window-control minimize" aria-label="Minimize application"></button>
+                <button class="window-control maximize" aria-label="Maximize application"></button>
+            </div>
+            <div class="window-title">Construction Management System</div>
+        </div>
+
+        <!-- ===========================================
+             APPLICATION CONTENT
+        ============================================ -->
+        <div class="app-content">
+            <!-- ===========================================
+                 TOP STATUS BAR
+            ============================================ -->
+            <div class="top-container">
+                <button type="button" class="back-btn" onclick="goBack()" aria-label="Return to dashboard">
+                    ← Dashboard
+                </button>
+
+                <div class="company-text">
+                    <h1 id="companyName">Company</h1>
+                    <p id="balance">Rp 0</p>
+                </div>
+
+                <div class="time-control">
+                    <div class="time-box">
+                        <span>In-Game Time</span>
+                        <strong id="gameTime">-</strong>
+                    </div>
+                    <button type="button" id="timeToggle" onclick="toggleTime()" class="time-toggle" aria-label="Toggle game time">
+                        ⏸️ Pause
+                    </button>
+                </div>
+            </div>
+
+            <!-- ===========================================
+                 MAIN BUILD CONTENT
+            ============================================ -->
+            <div class="build-layout">
+                <!-- ===========================================
+                     PROJECT SELECTION PANEL
+                ============================================ -->
+                <div class="build-options">
+                    <div class="build-options-header">
+                        <h2>Available Projects</h2>
+                    </div>
+
+                    <div class="build-options-content">
+                        <button type="button" class="build-item" data-property="House" aria-label="Build House - Residential property">
+                            <strong>🏠 House</strong>
+                            <span>Residential</span>
+                        </button>
+
+                        <button type="button" class="build-item" data-property="ShopHouse" aria-label="Build Shop House - Commercial property">
+                            <strong>🏬 Shop House</strong>
+                            <span>Commercial</span>
+                        </button>
+
+                        <button type="button" class="build-item" data-property="Apartment" aria-label="Build Apartment - High density property">
+                            <strong>🏢 Apartment</strong>
+                            <span>High Density</span>
+                        </button>
+
+                        <div class="build-item locked" aria-label="Mall - Locked until Company Level 5">
+                            <strong>🏬 Mall</strong>
+                            <span>Locked (Company Lv.5)</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ===========================================
+                     PROJECT DETAILS PANEL
+                ============================================ -->
+                <div class="build-details">
+                    <div class="build-details-header">
+                        <h2>Project Details</h2>
+                    </div>
+
+                    <div class="build-details-content">
+                        <div class="detail-row">
+                            <span>Project</span>
+                            <strong id="detailName">House</strong>
+                        </div>
+
+                        <div class="detail-row">
+                            <span>Category</span>
+                            <strong id="detailCategory">Residential</strong>
+                        </div>
+
+                        <div class="detail-row highlight">
+                            <span>Construction Cost</span>
+                            <strong id="detailCost">Rp 500,000,000</strong>
+                        </div>
+
+                        <div class="detail-row">
+                            <span>Build Duration</span>
+                            <strong id="detailTime">30 Days</strong>
+                        </div>
+
+                        <div class="detail-row">
+                            <span>Maintenance</span>
+                            <strong id="detailMaintenance">Rp 2,000,000 / day</strong>
+                        </div>
+
+                        <div class="detail-row">
+                            <span>Est. Income</span>
+                            <strong id="detailIncome">Rp 5,000,000 / day</strong>
+                        </div>
+
+                        <button type="button" class="confirm-btn" id="openBuildBtn" disabled aria-label="Open build menu for selected project">
+                            Use Build Menu
+                        </button>
+                    </div>
+                </div>
+
+                <!-- ===========================================
+                     CONSTRUCTION QUEUE
+                ============================================ -->
+                <div class="construction-queue">
+                    <h3>Construction Queue</h3>
+                    <p class="queue-hint">No active construction</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===========================================
+         BUILD MODAL
+    ============================================ -->
+    <div id="buildModal" class="build-modal hidden" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+        <div class="build-modal-content">
+            <button class="modal-close" onclick="closeBuildModal()" aria-label="Close modal">×</button>
+
+            <div class="modal-header">
+                <h3 id="modalTitle" class="modal-title">Build Project</h3>
+            </div>
+
+            <div class="modal-body">
+                <div id="modalConfig"></div>
+
+                <div class="build-field">
+                    <label for="landSelect">Land Plot</label>
+                    <select id="landSelect" aria-label="Select land plot for construction"></select>
+                </div>
+
+                <div class="modal-summary" id="modalSummary"></div>
+            </div>
+
+            <div class="modal-actions">
+                <button type="button" class="btn-secondary" onclick="closeBuildModal()" aria-label="Cancel build project">Cancel</button>
+                <button type="button" class="btn-primary" id="confirmBuildBtn" aria-label="Confirm and start construction">Confirm</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===========================================
+         QUEUE DETAIL MODAL
+    ============================================ -->
+    <div id="queueModal" class="build-modal hidden" role="dialog" aria-modal="true" aria-labelledby="queueModalTitle">
+        <div class="build-modal-content">
+            <button class="modal-close" onclick="closeQueueModal()" aria-label="Close modal">×</button>
+
+            <div class="modal-header">
+                <h3 id="queueModalTitle" class="modal-title">Project Detail</h3>
+            </div>
+
+            <div class="modal-body">
+                <div id="queueModalBody"></div>
+            </div>
+
+            <div class="modal-actions">
+                <button type="button" class="btn-secondary" onclick="closeQueueModal()" aria-label="Close project details">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===========================================
+         TOAST NOTIFICATIONS
+    ============================================ -->
+    <div id="toastContainer" class="toast-container" aria-live="polite" aria-atomic="true"></div>
+
+    <!-- JavaScript -->
+    <script src="../js/gameState.js"></script>
+    <script src="../js/gameUtils.js"></script>
+    <script src="../js/timeSystem.js"></script>
+    <script src="../js/build.js"></script>
+</body>
+</html>

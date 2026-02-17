@@ -1,0 +1,691 @@
+/* ===========================================
+   BUY LAND PAGE - PROFESSIONAL LAND ACQUISITION
+=============================================== */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #0a0e27 0%, #020617 50%, #000814 100%);
+    font-family: 'Inter', 'Space Grotesk', sans-serif;
+    color: #e5e7eb;
+    overflow-x: hidden;
+    position: relative;
+}
+
+/* Background Effects */
+body::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background:
+        radial-gradient(circle at 20% 80%, rgba(34, 211, 238, 0.08) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(6, 182, 212, 0.08) 0%, transparent 50%),
+        radial-gradient(circle at 40% 40%, rgba(168, 85, 247, 0.05) 0%, transparent 50%);
+    pointer-events: none;
+}
+
+/* ===========================================
+   APPLICATION WINDOW
+=============================================== */
+.app-window {
+    margin: 20px;
+    min-height: calc(100vh - 40px);
+    background: linear-gradient(145deg, rgba(15, 23, 42, 0.98), rgba(30, 41, 59, 0.95));
+    border-radius: 12px;
+    box-shadow:
+        0 32px 64px rgba(0, 0, 0, 0.8),
+        0 0 0 1px rgba(255, 255, 255, 0.05),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(148, 163, 184, 0.1);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Disable heavy effects on mobile */
+@media (max-width: 768px) {
+    .app-window {
+        backdrop-filter: none;
+        -webkit-backdrop-filter: none;
+    }
+}
+
+/* ===========================================
+   WINDOW TITLE BAR
+=============================================== */
+.window-titlebar {
+    height: 52px;
+    background: linear-gradient(90deg, rgba(2, 6, 23, 0.9), rgba(15, 23, 42, 0.8));
+    border-bottom: 1px solid rgba(148, 163, 184, 0.1);
+    display: flex;
+    align-items: center;
+    padding: 0 20px;
+    position: relative;
+    flex-shrink: 0;
+}
+
+.window-titlebar::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(90deg, rgba(34, 211, 238, 0.03), transparent 30%);
+}
+
+.window-controls {
+    display: flex;
+    gap: 8px;
+    margin-right: 16px;
+}
+
+.window-control {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.window-control.minimize {
+    background: #fbbf24;
+}
+
+.window-control.maximize {
+    background: #10b981;
+}
+
+.window-control.close {
+    background: #ef4444;
+}
+
+.window-control:hover {
+    transform: scale(1.1);
+}
+
+.window-title {
+    flex: 1;
+    text-align: center;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    color: #94a3b8;
+    letter-spacing: 0.5px;
+}
+
+/* ===========================================
+   MAIN APPLICATION CONTENT
+=============================================== */
+.app-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+/* ===========================================
+   TOP STATUS BAR
+=============================================== */
+.top-container {
+    background: linear-gradient(135deg, rgba(2, 6, 23, 0.9), rgba(15, 23, 42, 0.8));
+    border-bottom: 1px solid rgba(148, 163, 184, 0.1);
+    padding: 20px 32px;
+    display: grid;
+    grid-template-columns: auto auto 1fr auto;
+    gap: 20px;
+    align-items: center;
+    flex-shrink: 0;
+}
+
+.back-btn {
+    padding: 10px 16px;
+    border-radius: 8px;
+    border: 1px solid rgba(148, 163, 184, 0.2);
+    cursor: pointer;
+    background: linear-gradient(135deg, rgba(30, 41, 59, 0.8), rgba(51, 65, 85, 0.6));
+    color: #e5e7eb;
+    font-weight: 600;
+    font-size: 13px;
+    font-family: 'Inter', sans-serif;
+    transition: all 0.2s ease;
+}
+
+.back-btn:hover {
+    background: linear-gradient(135deg, rgba(51, 65, 85, 0.9), rgba(71, 85, 105, 0.7));
+    border-color: rgba(148, 163, 184, 0.4);
+    transform: translateY(-1px);
+}
+
+.company-text h1 {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 24px;
+    font-weight: 700;
+    background: linear-gradient(135deg, #22d3ee, #06b6d4);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin: 0;
+    letter-spacing: 0.5px;
+}
+
+.company-text p {
+    font-size: 14px;
+    font-weight: 600;
+    color: #22d3ee;
+    margin: 4px 0 0;
+    letter-spacing: 0.3px;
+}
+
+.time-control {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.time-box {
+    text-align: right;
+}
+
+.time-box span {
+    font-size: 11px;
+    color: #94a3b8;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.time-box strong {
+    display: block;
+    font-size: 16px;
+    margin-top: 4px;
+    font-weight: 600;
+    color: #e5e7eb;
+}
+
+.time-toggle {
+    padding: 10px 16px;
+    border-radius: 8px;
+    border: 1px solid rgba(148, 163, 184, 0.2);
+    cursor: pointer;
+    background: linear-gradient(135deg, rgba(30, 41, 59, 0.8), rgba(51, 65, 85, 0.6));
+    color: #e5e7eb;
+    font-weight: 600;
+    font-size: 13px;
+    transition: all 0.2s ease;
+}
+
+.time-toggle:hover {
+    background: linear-gradient(135deg, rgba(51, 65, 85, 0.9), rgba(71, 85, 105, 0.7));
+    border-color: rgba(148, 163, 184, 0.4);
+    transform: translateY(-1px);
+}
+
+/* ===========================================
+   BUY LAND CONTENT LAYOUT
+=============================================== */
+.buy-land-layout {
+    flex: 1;
+    display: grid;
+    grid-template-columns: 480px 1fr;
+    gap: 32px;
+    padding: 32px;
+    overflow: hidden;
+}
+
+/* ===========================================
+   PURCHASE FORM PANEL
+=============================================== */
+.buy-card {
+    background: linear-gradient(135deg, rgba(15, 23, 42, 0.95), rgba(30, 41, 59, 0.8));
+    border-radius: 12px;
+    border: 1px solid rgba(148, 163, 184, 0.1);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.buy-card-header {
+    padding: 24px 24px 20px;
+    border-bottom: 1px solid rgba(148, 163, 184, 0.1);
+    background: linear-gradient(90deg, rgba(2, 6, 23, 0.5), transparent);
+}
+
+.buy-card-header h2 {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    color: #e5e7eb;
+    margin: 0;
+}
+
+.buy-card-content {
+    flex: 1;
+    padding: 24px;
+    overflow-y: auto;
+}
+
+/* ===========================================
+   FORM ELEMENTS
+=============================================== */
+.form-group {
+    margin-bottom: 24px;
+}
+
+.form-group label {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    color: #94a3b8;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 8px;
+}
+
+.form-group input,
+.form-group select {
+    width: 100%;
+    height: 44px;
+    padding: 0 16px;
+    border-radius: 8px;
+    border: 1px solid rgba(148, 163, 184, 0.2);
+    outline: none;
+    background: rgba(2, 6, 23, 0.8);
+    color: #e5e7eb;
+    font-size: 14px;
+    font-family: 'Inter', sans-serif;
+    transition: all 0.2s ease;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+    border-color: rgba(34, 211, 238, 0.5);
+    box-shadow: 0 0 0 3px rgba(34, 211, 238, 0.1);
+    background: rgba(2, 6, 23, 0.95);
+}
+
+/* ===========================================
+   MARKET INFO
+=============================================== */
+.market-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px;
+    background: linear-gradient(135deg, rgba(2, 6, 23, 0.8), rgba(15, 23, 42, 0.6));
+    border-radius: 8px;
+    border: 1px solid rgba(148, 163, 184, 0.1);
+    margin-bottom: 24px;
+}
+
+.market-info span {
+    font-size: 13px;
+    color: #94a3b8;
+    font-weight: 500;
+}
+
+.market-info strong {
+    font-size: 14px;
+    font-weight: 600;
+    color: #e5e7eb;
+}
+
+/* ===========================================
+   PRICE BOX
+=============================================== */
+.price-box {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.price-item {
+    background: linear-gradient(135deg, rgba(2, 6, 23, 0.8), rgba(15, 23, 42, 0.6));
+    border-radius: 8px;
+    padding: 16px;
+    border: 1px solid rgba(148, 163, 184, 0.1);
+    text-align: center;
+    transition: all 0.3s ease;
+}
+
+.price-item:hover {
+    border-color: rgba(34, 211, 238, 0.3);
+    box-shadow: 0 4px 16px rgba(34, 211, 238, 0.15);
+}
+
+.price-item span {
+    display: block;
+    font-size: 11px;
+    color: #94a3b8;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 8px;
+}
+
+.price-item strong {
+    font-size: 20px;
+    font-weight: 700;
+    color: #e5e7eb;
+}
+
+/* ===========================================
+   PRICE BREAKDOWN & CASH IMPACT
+=============================================== */
+.price-breakdown,
+.cash-impact {
+    margin-bottom: 16px;
+    padding: 16px;
+    background: linear-gradient(135deg, rgba(2, 6, 23, 0.8), rgba(15, 23, 42, 0.6));
+    border-radius: 8px;
+    border: 1px solid rgba(148, 163, 184, 0.1);
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+.roi-box {
+    font-size: 13px;
+    background: linear-gradient(135deg, rgba(15, 23, 42, 0.9), rgba(30, 41, 59, 0.7));
+    padding: 12px 16px;
+    border-radius: 8px;
+    margin-top: 12px;
+    border: 1px solid rgba(148, 163, 184, 0.1);
+}
+
+/* ===========================================
+   CONFIRM BUTTON
+=============================================== */
+.confirm-btn {
+    width: 100%;
+    height: 48px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    background: linear-gradient(135deg, #22d3ee, #06b6d4);
+    color: #020617;
+    font-weight: 700;
+    font-family: 'Inter', sans-serif;
+    font-size: 15px;
+    transition: all 0.2s ease;
+    margin-top: auto;
+}
+
+.confirm-btn:hover:not(:disabled) {
+    background: linear-gradient(135deg, #06b6d4, #0891b2);
+    box-shadow: 0 8px 24px rgba(34, 211, 238, 0.3);
+    transform: translateY(-1px);
+}
+
+.confirm-btn:disabled {
+    background: linear-gradient(135deg, rgba(51, 65, 85, 0.8), rgba(71, 85, 105, 0.6));
+    color: #64748b;
+    cursor: not-allowed;
+}
+
+/* ===========================================
+   SIDE PANEL
+=============================================== */
+.buy-land-side {
+    background: linear-gradient(135deg, rgba(15, 23, 42, 0.95), rgba(30, 41, 59, 0.8));
+    border-radius: 12px;
+    border: 1px solid rgba(148, 163, 184, 0.1);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.side-header {
+    padding: 24px 24px 20px;
+    border-bottom: 1px solid rgba(148, 163, 184, 0.1);
+    background: linear-gradient(90deg, rgba(2, 6, 23, 0.5), transparent);
+}
+
+.side-header h3 {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    color: #e5e7eb;
+    margin: 0;
+}
+
+.side-content {
+    flex: 1;
+    padding: 24px;
+    overflow-y: auto;
+}
+
+/* ===========================================
+   RISK INDICATORS
+=============================================== */
+.risk-low {
+    color: #22c55e;
+    font-weight: 600;
+}
+
+.risk-medium {
+    color: #fbbf24;
+    font-weight: 600;
+}
+
+.risk-high {
+    color: #ef4444;
+    font-weight: 600;
+}
+
+/* ===========================================
+   RESPONSIVE DESIGN
+=============================================== */
+@media (max-width: 1200px) {
+    .buy-land-layout {
+        grid-template-columns: 1fr;
+        gap: 24px;
+    }
+}
+
+@media (max-width: 768px) {
+    .app-window {
+        margin: 10px;
+        min-height: calc(100vh - 20px);
+    }
+
+    .buy-land-layout {
+        padding: 20px 16px;
+        gap: 20px;
+    }
+
+    .buy-card-content,
+    .side-content {
+        padding: 20px;
+    }
+
+    .price-box {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+
+    .top-container {
+        padding: 16px 20px;
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+
+    .company-text {
+        text-align: center;
+    }
+
+    .time-control {
+        justify-content: center;
+    }
+}
+
+@media (max-width: 480px) {
+    .app-window {
+        margin: 5px;
+        min-height: calc(100vh - 10px);
+        border-radius: 8px;
+    }
+
+    .window-titlebar {
+        padding: 0 12px;
+        height: 44px;
+    }
+
+    .window-title {
+        font-size: 12px;
+    }
+
+    .top-container {
+        padding: 12px 16px;
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+
+    .company-text h1 {
+        font-size: 16px;
+    }
+
+    .company-text p {
+        font-size: 14px;
+    }
+
+    .time-control {
+        flex-direction: column;
+        gap: 8px;
+        align-items: center;
+    }
+
+    .time-box {
+        font-size: 12px;
+        padding: 8px 12px;
+    }
+
+    .time-toggle {
+        font-size: 12px;
+        padding: 6px 12px;
+    }
+
+    .buy-land-layout {
+        padding: 16px 12px;
+        gap: 16px;
+        grid-template-columns: 1fr;
+    }
+
+    .buy-card {
+        border-radius: 8px;
+    }
+
+    .buy-card-header {
+        padding: 16px 12px;
+    }
+
+    .buy-card-header h2 {
+        font-size: 16px;
+    }
+
+    .buy-card-content {
+        padding: 16px 12px;
+    }
+
+    .form-group {
+        margin-bottom: 16px;
+    }
+
+    .form-group label {
+        font-size: 12px;
+    }
+
+    .form-group select,
+    .form-group input {
+        height: 40px;
+        font-size: 14px;
+    }
+
+    .market-info {
+        font-size: 12px;
+        padding: 8px 12px;
+        border-radius: 6px;
+    }
+
+    .price-box {
+        gap: 12px;
+    }
+
+    .price-item {
+        padding: 12px;
+        border-radius: 6px;
+    }
+
+    .price-item span {
+        font-size: 11px;
+    }
+
+    .price-item strong {
+        font-size: 14px;
+    }
+
+    .price-breakdown,
+    .cash-impact {
+        font-size: 12px;
+        padding: 10px 12px;
+        border-radius: 6px;
+    }
+
+    .confirm-btn {
+        padding: 12px 20px;
+        font-size: 14px;
+    }
+
+    .buy-land-side {
+        border-radius: 8px;
+    }
+
+    .side-header {
+        padding: 16px 12px;
+    }
+
+    .side-header h3 {
+        font-size: 16px;
+    }
+
+    .side-content {
+        padding: 12px;
+    }
+
+    .roi-box {
+        font-size: 12px;
+        padding: 12px;
+        border-radius: 6px;
+    }
+}
+
+/* ===========================================
+   ACCESSIBILITY
+=============================================== */
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}

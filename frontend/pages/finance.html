@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Procoon Finance - Financial Reports and Cashflow Management">
+    <meta name="author" content="Procoon Studio">
+    <title>Finance - Procoon Property Tycoon</title>
+
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="../css/finance.css">
+</head>
+<body>
+    <!-- Main Application Window -->
+    <div class="app-window">
+        <!-- Window Title Bar -->
+        <header class="window-titlebar">
+            <div class="window-controls">
+                <button type="button" class="window-control close" aria-label="Close application"></button>
+                <button type="button" class="window-control minimize" aria-label="Minimize window"></button>
+                <button type="button" class="window-control maximize" aria-label="Maximize window"></button>
+            </div>
+            <h1 class="window-title">Financial Management System</h1>
+        </header>
+
+        <!-- Application Content -->
+        <div class="app-content">
+            <!-- Top Status Bar -->
+            <header class="top-container">
+                <button type="button" class="back-btn" onclick="goBack()" aria-label="Return to dashboard">
+                    ← Dashboard
+                </button>
+
+                <div class="company-text">
+                    <h1 id="companyName">Finance</h1>
+                    <p id="balance">Rp 0</p>
+                </div>
+
+                <div class="time-control">
+                    <div class="time-box">
+                        <span>In-Game Time</span>
+                        <strong id="gameTime">-</strong>
+                    </div>
+                    <button type="button" class="time-toggle" onclick="toggleTime()" aria-label="Toggle game time">
+                        ⏸️ Pause
+                    </button>
+                </div>
+            </header>
+
+            <!-- Main Finance Content -->
+            <main class="finance-content">
+                <!-- Financial Summary Section -->
+                <section class="finance-summary" aria-labelledby="finance-summary-title">
+                    <h2 id="finance-summary-title" class="sr-only">Financial Summary</h2>
+                    <div class="finance-card">
+                        <span class="label">Cash Balance</span>
+                        <strong id="cash">Rp 0</strong>
+                    </div>
+
+                    <div class="finance-card income">
+                        <span class="label">Daily Rental Income (Total)</span>
+                        <strong id="income">Rp 0</strong>
+                    </div>
+
+                    <div class="finance-card expense">
+                        <span class="label">Daily Expense</span>
+                        <strong id="expense">Rp 0</strong>
+                    </div>
+
+                    <div class="finance-card net">
+                        <span class="label">Net Profit / Day</span>
+                        <strong id="netProfitCard">Rp 0</strong>
+                    </div>
+                </section>
+
+                <!-- Financial Reports Section -->
+                <section class="finance-report" aria-labelledby="finance-report-title">
+                    <h2 id="finance-report-title" class="sr-only">Financial Reports</h2>
+
+                    <!-- Report Tabs Navigation -->
+                    <nav class="finance-tabs" role="tablist" aria-label="Financial report periods">
+                        <button type="button" class="tab-btn active" data-tab="daily" role="tab" aria-selected="true" aria-controls="report-daily">
+                            Daily
+                        </button>
+                        <button type="button" class="tab-btn" data-tab="monthly" role="tab" aria-selected="false" aria-controls="report-monthly">
+                            Monthly
+                        </button>
+                        <button type="button" class="tab-btn" data-tab="yearly" role="tab" aria-selected="false" aria-controls="report-yearly">
+                            Yearly
+                        </button>
+                    </nav>
+
+                    <!-- Daily Report Tab Panel -->
+                    <div class="report-section active" id="report-daily" role="tabpanel" aria-labelledby="daily-tab">
+                        <header class="report-header">
+                            <h3>Daily Financial Report</h3>
+                            <p class="hint">Operational performance for the current in-game day.</p>
+                        </header>
+
+                        <div class="daily-report-grid">
+                            <div class="report-block summary-block">
+                                <h4>Summary</h4>
+                                <div class="report-row">
+                                    <span>Total Income</span>
+                                    <strong id="dailyIncomeReport">Rp 0</strong>
+                                </div>
+                                <div class="report-row">
+                                    <span>Total Expense</span>
+                                    <strong id="dailyExpenseReport">Rp 0</strong>
+                                </div>
+                                <div class="report-row">
+                                    <span>Net Profit</span>
+                                    <strong id="dailyNetReport">Rp 0</strong>
+                                </div>
+                            </div>
+
+                            <div class="report-block income-block">
+                                <h4>Income Breakdown</h4>
+                                <div id="dailyIncomeBreakdown" class="asset-income-list"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Monthly Report Tab Panel -->
+                    <div class="report-section" id="report-monthly" role="tabpanel" aria-labelledby="monthly-tab">
+                        <header class="report-header">
+                            <h3>Monthly Financial Report</h3>
+                            <p class="hint">Accumulated performance for the current month.</p>
+                        </header>
+
+                        <div class="kpi-grid">
+                            <div class="kpi-card">
+                                <span>Total Income</span>
+                                <strong id="monthlyIncome">Rp 0</strong>
+                            </div>
+
+                            <div class="kpi-card expense">
+                                <span>Total Expense</span>
+                                <strong id="monthlyExpense">Rp 0</strong>
+                            </div>
+
+                            <div class="kpi-card net">
+                                <span>Net Profit</span>
+                                <strong id="monthlyNet">Rp 0</strong>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Yearly Report Tab Panel -->
+                    <div class="report-section" id="report-yearly" role="tabpanel" aria-labelledby="yearly-tab">
+                        <header class="report-header">
+                            <h3>Yearly Financial Report</h3>
+                            <p class="hint">Long-term financial performance overview.</p>
+                        </header>
+
+                        <div class="kpi-grid">
+                            <div class="kpi-card">
+                                <span>Total Income</span>
+                                <strong id="yearlyIncome">Rp 0</strong>
+                            </div>
+
+                            <div class="kpi-card expense">
+                                <span>Total Expense</span>
+                                <strong id="yearlyExpense">Rp 0</strong>
+                            </div>
+
+                            <div class="kpi-card net">
+                                <span>Net Profit</span>
+                                <strong id="yearlyNet">Rp 0</strong>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </main>
+        </div>
+    </div>
+
+    <!-- Toast Notifications -->
+    <div id="toastContainer" class="toast-container" aria-live="polite" aria-atomic="true"></div>
+
+    <!-- JavaScript -->
+    <script src="../js/gameState.js"></script>
+    <script src="../js/gameUtils.js"></script>
+    <script src="../js/timeSystem.js"></script>
+    <script src="../js/finance.js"></script>
+</body>
+</html>

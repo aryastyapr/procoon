@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Procoon - Professional Property Tycoon Simulation Game">
+    <meta name="author" content="Procoon Studio">
+    <title>Procoon - Property Tycoon</title>
+
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="../css/mainmenu.css">
+</head>
+<body>
+    <!-- Main Application Window -->
+    <div class="game-container">
+        <!-- Window Title Bar -->
+        <header class="window-titlebar">
+            <div class="window-controls">
+                <button type="button" class="window-control close" aria-label="Close application"></button>
+                <button type="button" class="window-control minimize" aria-label="Minimize window"></button>
+                <button type="button" class="window-control maximize" aria-label="Maximize window"></button>
+            </div>
+            <h1 class="window-title">Procoon Property Tycoon</h1>
+        </header>
+
+        <!-- Main Content -->
+        <main class="game-content">
+            <!-- Logo Section -->
+            <section class="game-logo">
+                <h1 class="game-title">PROCOON</h1>
+                <p class="game-subtitle">Property Tycoon Simulation</p>
+            </section>
+
+            <!-- Navigation Menu -->
+            <nav class="menu-section" role="navigation" aria-label="Main menu">
+                <div class="menu-buttons">
+                    <button type="button" class="menu-btn primary" onclick="newGame()" aria-label="Start a new game">
+                        <span>New Game</span>
+                    </button>
+                    <button type="button" class="menu-btn" onclick="loadGame()" aria-label="Load existing game">
+                        <span>Load Game</span>
+                    </button>
+                    <button type="button" class="menu-btn" onclick="openSettings()" aria-label="Open game settings">
+                        <span>Settings</span>
+                    </button>
+                </div>
+            </nav>
+
+            <!-- Footer -->
+            <footer class="game-footer">
+                <p>© 2026 Procoon Studio - Professional Property Management Simulation</p>
+            </footer>
+        </main>
+    </div>
+
+    <!-- New Game Modal -->
+    <div id="newGameModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="newGameTitle">
+        <div class="modal-card">
+            <header class="modal-header">
+                <h2 id="newGameTitle" class="modal-title">Create New Game</h2>
+            </header>
+
+            <div class="modal-body">
+                <form class="modal-form" id="newGameForm">
+                    <div class="form-group">
+                        <label for="companyName">Company Name</label>
+                        <input type="text" id="companyName" name="companyName" placeholder="e.g., Procoon Realty" required aria-describedby="companyHelp">
+                        <small id="companyHelp" class="form-help">Choose a unique name for your property company</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="ceoName">CEO Name</label>
+                        <input type="text" id="ceoName" name="ceoName" placeholder="e.g., John Smith" required aria-describedby="ceoHelp">
+                        <small id="ceoHelp" class="form-help">Your character's name in the game</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="gameMode">Game Mode</label>
+                        <select id="gameMode" name="gameMode" aria-describedby="modeHelp">
+                            <option value="sandbox">Sandbox Mode (Available)</option>
+                            <option value="easy" disabled>Easy Mode (Coming Soon)</option>
+                            <option value="normal" disabled>Normal Mode (Coming Soon)</option>
+                            <option value="hard" disabled>Hard Mode (Coming Soon)</option>
+                        </select>
+                        <small id="modeHelp" class="form-help">Select your preferred difficulty level</small>
+                    </div>
+                </form>
+            </div>
+
+            <footer class="modal-footer">
+                <button type="button" class="btn-secondary" onclick="closeNewGame()" aria-label="Cancel and return to main menu">
+                    Cancel
+                </button>
+                <button type="button" class="btn-primary" onclick="startNewGame()" aria-label="Start the new game">
+                    Start Game
+                </button>
+            </footer>
+        </div>
+    </div>
+
+    <!-- Confirmation Modal -->
+    <div id="confirmationModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="confirmationTitle">
+        <div class="modal-card">
+            <header class="modal-header">
+                <h2 id="confirmationTitle" class="modal-title">Game Started Successfully!</h2>
+            </header>
+
+            <div class="modal-body">
+                <p id="confirmationMessage"></p>
+            </div>
+
+            <footer class="modal-footer">
+                <button type="button" class="btn-primary" onclick="confirmStartGame()" aria-label="Confirm and start the game">
+                    OK
+                </button>
+            </footer>
+        </div>
+    </div>
+
+    <!-- Warning Modal -->
+    <div id="warningModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="warningTitle">
+        <div class="modal-card">
+            <header class="modal-header">
+                <h2 id="warningTitle" class="modal-title">Data Incomplete</h2>
+            </header>
+
+            <div class="modal-body">
+                <p id="warningMessage">Please fill in all required fields before starting the game.</p>
+            </div>
+
+            <footer class="modal-footer">
+                <button type="button" class="btn-primary" onclick="closeWarningModal()" aria-label="Close warning and return to form">
+                    OK
+                </button>
+            </footer>
+        </div>
+    </div>
+
+    <!-- Toast Notifications -->
+    <div id="toastContainer" class="toast-container" aria-live="polite" aria-atomic="true"></div>
+
+    <!-- JavaScript -->
+    <script src="../js/mainmenu.js"></script>
+</body>
+</html>
