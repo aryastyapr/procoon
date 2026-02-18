@@ -246,10 +246,29 @@
         </div>
     </div>
 
+    <!-- Save Slots Modal -->
+    <div id="saveSlotsModal" class="system-modal hidden" role="dialog" aria-modal="true" aria-labelledby="save-slots-title">
+        <div class="system-card save-slots-card">
+            <button class="close-btn" onclick="closeSaveSlotsModal()">✕</button>
+            <header class="modal-header">
+                <h3 id="save-slots-title" class="modal-title">Save Slots</h3>
+            </header>
+
+            <div class="modal-body">
+                <div id="saveSlotsList" class="save-slots-list" aria-live="polite"></div>
+            </div>
+
+            <footer class="modal-footer">
+                <button type="button" class="system-action" onclick="closeSaveSlotsModal()">Close</button>
+            </footer>
+        </div>
+    </div>
+
     <!-- Toast Notifications -->
     <div id="toastContainer" class="toast-container" aria-live="polite" aria-atomic="true"></div>
 
     <!-- JavaScript -->
+    <script src="../js/uiModal.js"></script>
     <script src="../js/gameState.js"></script>
     <script src="../js/gameUtils.js"></script>
     <script src="../js/timeSystem.js"></script>

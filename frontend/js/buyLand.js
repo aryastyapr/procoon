@@ -1,6 +1,6 @@
 if (!window.saveData) {
-    alert("No save data found!");
-    location.href = "mainmenu.html";
+    showAlertModal("No save data found!", "Missing Save").then(() => location.href = "mainmenu.html");
+    throw new Error("Missing save data");
 }
 
 // ================= INIT =================
@@ -107,22 +107,22 @@ if (roiBox) {
 }
 
 // ================= BUY LAND =================
-function confirmBuyLand() {
+async function confirmBuyLand() {
     const city = citySelect.value;
     const ha = parseFloat(landSizeInput.value);
 
     if (!ha || ha <= 0)
-        return alert("Invalid land size");
+        return showAlertModal("Invalid land size", "Input Error");
 
     const detail = getLandPriceDetail(city);
-if (!detail) return alert("Market data unavailable");
+if (!detail) return showAlertModal("Market data unavailable", "Market Error");
 
 const pricePerM2 = detail.finalPrice;
     const m2 = ha * 10000;
     const totalCost = pricePerM2 * m2;
 
     if (saveData.finance.cash < totalCost)
-        return alert("Saldo tidak mencukupi");
+        return showAlertModal("Insufficient cash", "Not Enough Cash");
 
     // ===============================
 // CASH IMPACT WARNING
@@ -131,10 +131,11 @@ const remainingCash =
     saveData.finance.cash - totalCost;
 
 if (remainingCash < saveData.finance.cash * 0.25) {
-    const proceed = confirm(
-        "⚠ WARNING:\n" +
-        "This purchase will consume most of your cash.\n\n" +
-        "Proceed anyway?"
+    const proceed = await showConfirmModal(
+        "⚠ WARNING:\nThis purchase will consume most of your cash.\n\nProceed anyway?",
+        "Low Cash Warning",
+        "Proceed",
+        "Cancel"
     );
     if (!proceed) return;
 }

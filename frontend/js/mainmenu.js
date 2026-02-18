@@ -1,4 +1,6 @@
 const modal = document.getElementById("newGameModal");
+const SAVE_SLOTS_KEY = "procoon_saves";
+const ACTIVE_SLOT_KEY = "procoon_active_slot";
 
 function newGame() {
     modal.classList.remove("hidden");
@@ -31,13 +33,12 @@ function startNewGame() {
 
 function loadGame() {
     console.log("Load Game");
-    alert("Load Game clicked!");
-    // nanti load dari save data
+    openLoadGameModal();
 }
 
 function openSettings() {
     console.log("Settings");
-    alert("Settings clicked!");
+    showAlertModal("Settings clicked!", "Coming Soon");
     // nanti ke settings menu
 }
 
@@ -90,7 +91,7 @@ function confirmStartGame() {
             cycle: "expansion",
             cycleStart: new Date(2026, 0, 1).toISOString(),
             durationMonths: 24,
-            volatility: 0.02 // 2% chance shock per bulan
+            volatility: 0.02 // 2% monthly shock chance
         },
 
         assets: [],
@@ -115,4 +116,120 @@ function openWarningModal() {
 function closeWarningModal() {
     const modal = document.getElementById("warningModal");
     modal.classList.add("hidden");
+}
+
+// ===== LOAD GAME MODAL =====
+function openLoadGameModal() {
+    const modal = document.getElementById("loadGameModal");
+    if (!modal) return;
+    renderLoadSlots();
+    modal.classList.remove("hidden");
+}
+
+function closeLoadGameModal() {
+    const modal = document.getElementById("loadGameModal");
+    if (!modal) return;
+    modal.classList.add("hidden");
+}
+
+function getSaveSlots() {
+    const raw = localStorage.getItem(SAVE_SLOTS_KEY);
+    const slots = raw ? JSON.parse(raw) : [];
+    while (slots.length < 3) slots.push(null);
+    return slots.slice(0, 3);
+}
+
+function setSaveSlots(slots) {
+    localStorage.setItem(SAVE_SLOTS_KEY, JSON.stringify(slots));
+}
+
+function buildSlotMeta(slot, index) {
+    if (!slot) {
+        return {
+            title: `Slot ${index + 1}`,
+            details: "Empty slot"
+        };
+    }
+
+    const meta = slot.meta || {};
+    const savedAt = meta.savedAt ? new Date(meta.savedAt) : null;
+    const savedLabel = savedAt
+        ? savedAt.toLocaleString("en-US", { dateStyle: "medium", timeStyle: "short" })
+        : "Unknown time";
+
+    return {
+        title: `${meta.companyName || "Company"} — Slot ${index + 1}`,
+        details: `CEO: ${meta.ceoName || "-"} • Mode: ${meta.mode || "Sandbox"}\nSaved: ${savedLabel}`
+    };
+}
+
+function renderLoadSlots() {
+    const container = document.getElementById("loadSlotsList");
+    if (!container) return;
+
+    const slots = getSaveSlots();
+    container.innerHTML = "";
+
+    slots.forEach((slot, index) => {
+        const meta = buildSlotMeta(slot, index);
+        const row = document.createElement("div");
+        row.className = "save-slot";
+
+        const info = document.createElement("div");
+        info.innerHTML = `
+            <div class="save-slot-title">${meta.title}</div>
+            <div class="save-slot-meta">${meta.details.replace(/\n/g, "<br>")}</div>
+        `;
+
+        const actions = document.createElement("div");
+        actions.className = "save-slot-actions";
+
+        const loadBtn = document.createElement("button");
+        loadBtn.className = "load-btn";
+        loadBtn.type = "button";
+        loadBtn.innerText = "Load";
+        loadBtn.disabled = !slot;
+        loadBtn.onclick = () => loadSlot(index);
+
+        const deleteBtn = document.createElement("button");
+        deleteBtn.className = "delete-btn";
+        deleteBtn.type = "button";
+        deleteBtn.innerText = "Delete";
+        deleteBtn.disabled = !slot;
+        deleteBtn.onclick = () => deleteSlot(index);
+
+        actions.appendChild(loadBtn);
+        actions.appendChild(deleteBtn);
+        row.appendChild(info);
+        row.appendChild(actions);
+        container.appendChild(row);
+    });
+}
+
+async function loadSlot(index) {
+    const slots = getSaveSlots();
+    const slot = slots[index];
+    if (!slot) return;
+
+    localStorage.setItem("procoon_save", JSON.stringify(slot.data));
+    localStorage.setItem(ACTIVE_SLOT_KEY, String(index));
+    closeLoadGameModal();
+    window.location.href = "dashboard.html";
+}
+
+async function deleteSlot(index) {
+    const slots = getSaveSlots();
+    if (!slots[index]) return;
+
+    const confirmDelete = await showConfirmModal(
+        `Delete Slot ${index + 1}?\nThis cannot be undone.`,
+        "Delete Save",
+        "Delete",
+        "Cancel"
+    );
+    if (!confirmDelete) return;
+
+    slots[index] = null;
+    setSaveSlots(slots);
+    renderLoadSlots();
 }

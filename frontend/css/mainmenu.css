@@ -387,6 +387,75 @@ body::before {
     gap: 12px;
 }
 
+/* ===== SAVE SLOT LIST ===== */
+.save-slots-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 4px;
+}
+
+.save-slot {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 14px;
+    border-radius: 12px;
+    border: 1px solid rgba(148, 163, 184, 0.2);
+    background: rgba(15, 23, 42, 0.7);
+}
+
+.save-slot-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: #f8fafc;
+    margin-bottom: 4px;
+}
+
+.save-slot-meta {
+    font-size: 12px;
+    color: #94a3b8;
+    line-height: 1.4;
+}
+
+.save-slot-actions {
+    display: flex;
+    gap: 8px;
+    flex-shrink: 0;
+}
+
+.save-slot-actions button {
+    border: none;
+    border-radius: 8px;
+    padding: 8px 12px;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: transform 0.15s ease, filter 0.2s ease;
+}
+
+.save-slot-actions button:hover {
+    transform: translateY(-1px);
+    filter: brightness(1.05);
+}
+
+.load-btn {
+    background: linear-gradient(135deg, #38bdf8, #2563eb);
+    color: #e2e8f0;
+}
+
+.delete-btn {
+    background: linear-gradient(135deg, #f97316, #ea580c);
+    color: #1f2937;
+}
+
+.load-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    filter: none;
+}
+
 .modal-footer button {
     flex: 1;
     height: 44px;

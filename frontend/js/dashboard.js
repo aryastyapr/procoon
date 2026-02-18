@@ -1,7 +1,9 @@
 // ================== LOAD SAVE DATA ==================
 if (!saveData) {
-    alert("No save data found!");
-    window.location.href = "mainmenu.html";
+    showAlertModal("No save data found!", "Missing Save").then(() => {
+        window.location.href = "mainmenu.html";
+    });
+    throw new Error("Missing save data");
 }
 
 // ================== INIT UI ==================
@@ -111,19 +113,132 @@ function renderSellSummary() {
 }
 
 // ================== SAVE GAME ==================
-function saveGame() {
+const SAVE_SLOTS_KEY = "procoon_saves";
+const ACTIVE_SLOT_KEY = "procoon_active_slot";
+
+function getSaveSlots() {
+    const raw = localStorage.getItem(SAVE_SLOTS_KEY);
+    const slots = raw ? JSON.parse(raw) : [];
+    while (slots.length < 3) slots.push(null);
+    return slots.slice(0, 3);
+}
+
+function setSaveSlots(slots) {
+    localStorage.setItem(SAVE_SLOTS_KEY, JSON.stringify(slots));
+}
+
+function buildSlotMeta(slot, index) {
+    if (!slot) {
+        return {
+            title: `Slot ${index + 1}`,
+            details: "Empty slot"
+        };
+    }
+
+    const meta = slot.meta || {};
+    const savedAt = meta.savedAt ? new Date(meta.savedAt) : null;
+    const savedLabel = savedAt
+        ? savedAt.toLocaleString("en-US", { dateStyle: "medium", timeStyle: "short" })
+        : "Unknown time";
+
+    return {
+        title: `${meta.companyName || "Company"} — Slot ${index + 1}`,
+        details: `CEO: ${meta.ceoName || "-"} • Mode: ${meta.mode || "Sandbox"}\nSaved: ${savedLabel}`
+    };
+}
+
+function openSaveSlotsModal() {
+    const modal = document.getElementById("saveSlotsModal");
+    if (!modal) return;
+    renderSaveSlots();
+    modal.classList.remove("hidden");
+    window.isRunning = false;
+}
+
+function closeSaveSlotsModal() {
+    const modal = document.getElementById("saveSlotsModal");
+    if (!modal) return;
+    modal.classList.add("hidden");
+    window.isRunning = true;
+}
+
+function renderSaveSlots() {
+    const container = document.getElementById("saveSlotsList");
+    if (!container) return;
+
+    const slots = getSaveSlots();
+    container.innerHTML = "";
+
+    slots.forEach((slot, index) => {
+        const meta = buildSlotMeta(slot, index);
+        const row = document.createElement("div");
+        row.className = "save-slot";
+
+        const info = document.createElement("div");
+        info.innerHTML = `
+            <div class="save-slot-title">${meta.title}</div>
+            <div class="save-slot-meta">${meta.details.replace(/\n/g, "<br>")}</div>
+        `;
+
+        const actions = document.createElement("div");
+        actions.className = "save-slot-actions";
+
+        const saveBtn = document.createElement("button");
+        saveBtn.className = "save-btn";
+        saveBtn.type = "button";
+        saveBtn.innerText = slot ? "Overwrite" : "Save";
+        saveBtn.onclick = () => saveToSlot(index);
+
+        actions.appendChild(saveBtn);
+        row.appendChild(info);
+        row.appendChild(actions);
+        container.appendChild(row);
+    });
+}
+
+async function saveToSlot(index) {
+    const slots = getSaveSlots();
+
+    if (slots[index]) {
+        const confirmOverwrite = await showConfirmModal(
+            `Overwrite Slot ${index + 1}?\nThis will replace the existing save.`,
+            "Overwrite Save",
+            "Overwrite",
+            "Cancel"
+        );
+        if (!confirmOverwrite) return;
+    }
+
     saveData.gameTime = window.gameTime?.toISOString?.() ?? new Date().toISOString();
+    const meta = {
+        companyName: saveData.companyName || "Company",
+        ceoName: saveData.ceoName || "-",
+        mode: saveData.mode || "Sandbox",
+        cash: saveData.finance?.cash ?? 0,
+        gameTime: saveData.gameTime,
+        savedAt: new Date().toISOString()
+    };
+
+    slots[index] = { meta, data: saveData };
+    setSaveSlots(slots);
     localStorage.setItem("procoon_save", JSON.stringify(saveData));
+    localStorage.setItem(ACTIVE_SLOT_KEY, String(index));
+
+    renderSaveSlots();
     if (typeof showToast === "function") {
-        showToast("💾 Game saved successfully!");
+        showToast(`💾 Saved to Slot ${index + 1}`);
     } else {
-        alert("Game saved!");
+        showAlertModal(`Saved to Slot ${index + 1}`, "Save");
     }
 }
 
+function saveGame() {
+    openSaveSlotsModal();
+}
+
 // ================== MAIN MENU ==================
-function goToMainMenu() {
-    const confirmExit = confirm("Kembali ke Main Menu?\nProgress yang belum disimpan akan hilang.");
+async function goToMainMenu() {
+    const confirmExit = await showConfirmModal("Return to Main Menu?\nUnsaved progress will be lost.", "Confirm Exit", "Yes", "Stay");
     if (!confirmExit) return;
     window.isRunning = false;
     window.location.href = "mainmenu.html";

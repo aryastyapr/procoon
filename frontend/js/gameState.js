@@ -1,8 +1,8 @@
 window.saveData = JSON.parse(localStorage.getItem("procoon_save"));
 
 if (!window.saveData) {
-    alert("No save data found");
-    location.href = "mainmenu.html";
+    showAlertModal("No save data found", "Missing Save").then(() => location.href = "mainmenu.html");
+    throw new Error("Missing save data");
 }
 
 saveData.version ??= 1;
@@ -22,6 +22,9 @@ if (!saveData.market) {
         volatility: 0.02
     };
 }
+
+// INIT PRICE CACHE
+saveData.landPriceCache ??= {};
 
 // ===============================
 // CITY CONFIG (LAND MARKET)
@@ -259,7 +262,8 @@ window.getLandPriceDetail = function (cityId) {
         basePrice: city.basePrice,
         finalPrice: price,
         year,
-        month
+        month,
+        cycle: saveData.market?.cycle || "normal"
     };
 
     saveData.landPriceCache[cityId][monthKey] = result;
@@ -284,7 +288,7 @@ window.registerDailyHandler = function (fn) {
 window.onNewGameDay = function () {
     window._dailyHandlers.forEach(fn => fn());
 
-    // RESET HARIAN (SATU-SATUNYA TEMPAT RESET)
+    // DAILY RESET (ONLY RESET ENTRY POINT)
     saveData.finance.dailyIncome = 0;
     saveData.finance.dailyExpense = 0;
     saveData.finance.assetIncome = [];
@@ -310,8 +314,8 @@ window.onNewGameDay = function () {
 
         const price = asset.finance.rentPrice;
 
-        // ⚠️ OCCUPANCY SUDAH DI-UPDATE SAAT BULAN BERUBAH
-        // Tidak perlu recalculate lagi di sini
+        // ⚠️ OCCUPANCY IS ALREADY UPDATED WHEN MONTH CHANGES
+        // No need to recalculate again here
 
         const dailyRent = Math.floor(price / 30);
         const income = asset.finance.occupiedUnits * dailyRent;
@@ -334,6 +338,107 @@ window.onNewGameDay = function () {
         });
     });
 
+    // ===============================
+    // LOAN SYSTEM: HYBRID AUTO-PAY WITH BUFFER
+    // ===============================
+    if (Array.isArray(saveData.finance.loans)) {
+      saveData.finance.loans.forEach(loan => {
+        if (loan.status !== "active") return;
+
+        const today = new Date(window.gameTime);
+        const due = new Date(loan.nextDueDate);
+
+        // Defensive defaults for older saves
+        if (typeof loan.monthlyRate !== 'number') {
+            if (typeof loan.annualRate === 'number') loan.monthlyRate = loan.annualRate / 12;
+            else if (typeof loan.rate === 'number') loan.monthlyRate = loan.rate;
+            else loan.monthlyRate = 0;
+        }
+        if (typeof loan.autoPayEnabled !== 'boolean') loan.autoPayEnabled = false;
+        if (typeof loan.reminderSent !== 'boolean') loan.reminderSent = false;
+
+        // ===============================
+        // 🔔 REMINDER 3 DAYS BEFORE DUE
+        // ===============================
+        const daysLeft = Math.ceil((due - today) / 86400000);
+        if (daysLeft === 3 && !loan.reminderSent) {
+          showToast(
+            `⏰ Loan payment due in 3 days (${formatRupiah(
+              loan.monthlyInstallment
+            )})`,
+            "warning",
+            4000
+          );
+          loan.reminderSent = true;
+        }
+
+        if (today < due) {
+          return;
+        }
+
+        // Reset reminder flag on due date
+        loan.reminderSent = false;
+
+        // ===============================
+        // AUTO-PAY LOGIC (if enabled)
+        // ===============================
+        if (loan.autoPayEnabled && today.getDate() === 5) {
+          const paidKey = `${today.getFullYear()}-${today.getMonth()}`;
+          if (loan.lastPaidMonth === paidKey) return; // already paid this month
+
+          // Buffer check: cash >= installment + (3× daily income)
+          const dailyIncome = saveData.finance.dailyIncome || 0;
+          const buffer = dailyIncome * 3;
+          const safeBalance = loan.monthlyInstallment + buffer;
+
+          if (saveData.finance.cash >= safeBalance) {
+            // Safe auto-pay
+            saveData.finance.cash -= loan.monthlyInstallment;
+
+            const interest = Math.floor(
+                loan.outstandingPrincipal * (loan.monthlyRate || 0)
+            );
+            const principalPaid = loan.monthlyInstallment - interest;
+
+            loan.outstandingPrincipal -= principalPaid;
+            loan.remainingMonths--;
+            loan.lastPaidMonth = paidKey;
+
+            const nextDue = new Date(due);
+            nextDue.setMonth(nextDue.getMonth() + 1);
+            nextDue.setDate(5);
+            loan.nextDueDate = nextDue.toISOString();
+
+            saveData.finance.history.push({
+              date: today.toDateString(),
+              income: 0,
+              expense: loan.monthlyInstallment,
+              net: -loan.monthlyInstallment,
+              note: `Auto-Pay Loan #${loan.id.substr(-4)} (principal ${formatRupiah(principalPaid)}, interest ${formatRupiah(interest)})`
+            });
+
+            if (loan.remainingMonths <= 0 || loan.outstandingPrincipal <= 0) {
+              loan.status = "paid";
+              loan.outstandingPrincipal = 0;
+              showToast(`✅ Loan #${loan.id.substr(-4)} fully paid (auto)`, "success");
+            } else {
+              showToast(`💳 Auto-Pay: Loan #${loan.id.substr(-4)} (${formatRupiah(loan.monthlyInstallment)})`, "success");
+            }
+          } else {
+            // Insufficient cash for buffer-protected auto-pay
+            showToast(
+              `⚠️ Auto-Pay skipped: Loan #${loan.id.substr(-4)} - insufficient buffer (need ${formatRupiah(safeBalance)})`,
+              "warning",
+              5000
+            );
+          }
+        }
+        // If auto-pay is OFF, user must pay manually via Finance page
+      });
+    }
+
+
+
     localStorage.setItem("procoon_save", JSON.stringify(saveData));
 };
 
@@ -350,7 +455,7 @@ window.updateMonthlyOccupancy = function () {
         const sim = calculateRentSimulation(asset, price);
         if (!sim) return;
 
-        // Random occupancy dalam range dengan weighted distribution
+        // Random occupancy within range using weighted distribution
         const newOccupancy = calculateDailyOccupancy(asset.units, sim.minOcc, sim.maxOcc, sim.demandPercent);
         
         asset.finance.occupiedUnits = newOccupancy;
@@ -360,28 +465,28 @@ window.updateMonthlyOccupancy = function () {
     localStorage.setItem("procoon_save", JSON.stringify(saveData));
 };
 
-// ===== OCCUPANCY MONTHLY DINAMIS =====
+// ===== DYNAMIC MONTHLY OCCUPANCY =====
 window.calculateDailyOccupancy = function (totalUnits, minOcc, maxOcc, demandPercent) {
     // Weighted random distribution
-    // Lebih sering di range 45-65% dari max range, tapi bisa swing ke extreme
+    // More frequent in 45-65% of max range, but can swing to extremes
     
     const range = maxOcc - minOcc;
     const mid = minOcc + (range / 2);
     
-    // Probabilitas: 60% di tengah, 40% random
+    // Probability: 60% near middle, 40% random
     if (Math.random() < 0.6) {
-        // Stay near middle ±20% dari range
+        // Stay near middle ±20% of range
         const variance = range * 0.2;
         const randomOffset = (Math.random() - 0.5) * variance * 2;
         const occ = Math.round(mid + randomOffset);
         return Math.max(minOcc, Math.min(maxOcc, occ));
     } else {
-        // Random di seluruh range
+        // Random across full range
         return minOcc + Math.floor(Math.random() * (range + 1));
     }
 };
 
-// ===== RENT SIMULATION (DIPINDAHKAN DARI ASSETS.JS DAN DIPERBAIKI) =====
+// ===== RENT SIMULATION (MOVED FROM ASSETS.JS AND FIXED) =====
 window.calculateRentSimulation = function (asset, price) {
     const key = `${asset.name}-${asset.variant}`;
     const cfg = RENT_MARKET_CONFIG[key];
@@ -390,15 +495,15 @@ window.calculateRentSimulation = function (asset, price) {
     const marketPrice = (cfg.min + cfg.max) / 2;
     const ratio = price / marketPrice;
 
-    // ===== ELASTICITY YANG LEBIH SENSITIF =====
+    // ===== MORE SENSITIVE ELASTICITY =====
     let elasticity;
-    if (ratio <= 0.7)       elasticity = 1.25;         // Sangat murah → full kapasitas
-    else if (ratio <= 0.85) elasticity = 1.1;         // Murah
+    if (ratio <= 0.7)       elasticity = 1.25;         // Very cheap → near full capacity
+    else if (ratio <= 0.85) elasticity = 1.1;         // Cheap
     else if (ratio <= 1.0)  elasticity = 0.95;        // Fair market
-    else if (ratio <= 1.1)  elasticity = 0.85;        // Sedikit mahal
-    else if (ratio <= 1.25) elasticity = 0.65;        // Mahal
-    else if (ratio <= 1.5)  elasticity = 0.35;        // Sangat mahal
-    else if (ratio < 2.0)   elasticity = 0.1;         // Ekstrem
+    else if (ratio <= 1.1)  elasticity = 0.85;        // Slightly expensive
+    else if (ratio <= 1.25) elasticity = 0.65;        // Expensive
+    else if (ratio <= 1.5)  elasticity = 0.35;        // Very expensive
+    else if (ratio < 2.0)   elasticity = 0.1;         // Extreme
     else                    elasticity = 0;            // Dead market
 
     if (ratio >= 2) {
@@ -408,7 +513,7 @@ window.calculateRentSimulation = function (asset, price) {
             demandPercent: 0,
             maintenance: Math.floor((price / 30) * 0.25),
             risk: "Dead Market",
-            warning: "Rent terlalu mahal. Tidak ada penyewa sama sekali."
+            warning: "Rent is too expensive. There are no tenants at all."
         };
     }
 
@@ -419,8 +524,8 @@ window.calculateRentSimulation = function (asset, price) {
     // ===== BASE OCCUPANCY =====
     const baseOcc = Math.floor(asset.units * demand);
     
-    // ===== RANGE YANG LEBIH LEBAR =====
-    // Range: 8-12 units untuk small, 15-25 units untuk medium/large
+    // ===== WIDER RANGE =====
+    // Range: 8-12 units for small, 15-25 units for medium/large
     let rangeSize;
     if (asset.units < 50) {
         rangeSize = 6 + Math.floor(Math.random() * 4);  // 6-10 units
@@ -440,13 +545,13 @@ window.calculateRentSimulation = function (asset, price) {
     let risk, warning;
     if (ratio < 0.8) {
         risk = "Low margin";
-        warning = "Rent terlalu murah. Unit cepat penuh tapi profit kecil.";
+        warning = "Rent is too low. Units fill quickly but profits are small.";
     } else if (ratio > 1.2) {
         risk = "High vacancy";
-        warning = "Harga terlalu mahal. Penyewa akan turun drastis.";
+        warning = "Price is too expensive. Tenant occupancy will drop sharply.";
     } else {
         risk = "Healthy";
-        warning = "Harga seimbang dengan pasar.";
+        warning = "Price is balanced with the market.";
     }
 
     return {
@@ -457,7 +562,10 @@ window.calculateRentSimulation = function (asset, price) {
         risk,
         warning
     };
+
 };
+
+
 
 // ===============================
 // GAME CORE — FINANCE PROCESS
@@ -473,11 +581,12 @@ window.processDailyFinance = function () {
     }
 
     f.history.push({
-        date: window.gameTime.toDateString(),
-        income: f.dailyIncome,
-        expense: f.dailyExpense,
-        net
-    });
+  date: window.gameTime.toDateString(),
+  income: f.dailyIncome,
+  expense: f.dailyExpense,
+  net,
+  source: "daily"
+});
 
     localStorage.setItem("procoon_save", JSON.stringify(saveData));
 };
@@ -489,6 +598,7 @@ saveData.finance.dailyIncome ??= 0;
 saveData.finance.dailyExpense ??= 0;
 saveData.finance.assetIncome ??= [];
 saveData.finance.history ??= [];
+saveData.finance.loans ??= [];
 saveData.lastProcessedDay ??= null;
 
 window.isRunning = true;

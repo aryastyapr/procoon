@@ -55,7 +55,7 @@ window.formatRupiah = function(num){
     return "Rp " + num.toLocaleString("id-ID");
 };
 
-// Helper untuk input value
+// Helper for input value
 window.formatRupiahInput = function(num) {
     if (!num || isNaN(num)) return "";
     return num.toLocaleString("id-ID");
@@ -72,7 +72,7 @@ window.randomRange = function(min, max) {
 
 window.diffMonths = function(fromISO, toDate) {
     const from = new Date(fromISO);
-    // Handle jika toDate string ISO
+    // Handle if toDate is an ISO string
     const to = toDate instanceof Date ? toDate : new Date(toDate);
     
     return (
@@ -107,7 +107,7 @@ window.showToast = function(message, type = "success", duration = 3000) {
 
 // ================== ECONOMY LOGIC (CENTRALIZED) ==================
 
-// Menghitung harga jual aset (Dipakai di Dashboard & Assets)
+// Calculate final asset selling price (used in Dashboard & Assets)
 window.calculateFinalSellPrice = function(asset, mode) {
     const market = saveData.market;
     if (!market) return asset.cost;
@@ -115,7 +115,7 @@ window.calculateFinalSellPrice = function(asset, mode) {
     const cycleCfg = window.MARKET_CYCLE_CONFIG?.[market.cycle];
     if (!cycleCfg) return asset.cost;
 
-    // hitung market value SEKARANG
+    // calculate current market value
     const monthsHeld = diffMonths(
         asset.completedAt,
         window.gameTime
@@ -150,43 +150,7 @@ window.calculateFinalSellPrice = function(asset, mode) {
 };
 
 // ================== LAND ENGINE UTILS ==================
-
-window.getLandPriceDetail = function (cityId) {
-    const city = CITY_CONFIG?.[cityId];
-    if (!city || !saveData.market) return null;
-
-    const monthKey =
-        window.gameTime.getFullYear() + "-" + window.gameTime.getMonth();
-
-    if (!saveData.landPriceCache[monthKey]) {
-        saveData.landPriceCache[monthKey] = {};
-    }
-
-    if (!saveData.landPriceCache[monthKey][cityId]) {
-        const cycle = saveData.market.cycle;
-        const marketCfg = MARKET_CYCLE_CONFIG?.[cycle] || { demand: 1 };
-        const volatility = 1 + (Math.random() * city.volatility - city.volatility / 2);
-
-        const finalPrice = Math.floor(
-            city.basePrice *
-            marketCfg.demand *
-            city.demand *
-            volatility
-        );
-
-        saveData.landPriceCache[monthKey][cityId] = {
-            price: finalPrice,
-            cycle
-        };
-        localStorage.setItem("procoon_save", JSON.stringify(saveData));
-    }
-
-    const cached = saveData.landPriceCache[monthKey][cityId];
-    return {
-        finalPrice: cached.price,
-        cycle: cached.cycle
-    };
-};
+// NOTE: getLandPriceDetail is defined in gameState.js - do not duplicate here!
 
 window.calculateLandROI = function ({ cityId, landHa, years = 5 }) {
     const city = CITY_CONFIG?.[cityId];

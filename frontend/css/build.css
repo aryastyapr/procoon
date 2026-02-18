@@ -533,13 +533,14 @@ body::before {
 .build-modal {
     position: fixed;
     inset: 0;
-    background: rgba(2, 6, 23, 0.9);
-    backdrop-filter: blur(12px);
+    background: rgba(2, 6, 23, 0.72);
+    backdrop-filter: blur(10px);
     display: flex;
     justify-content: center;
     align-items: center;
     z-index: 2000;
     animation: modalFadeIn 0.3s ease;
+    padding: 16px;
 }
 
 .build-modal.hidden {
@@ -559,14 +560,12 @@ body:not(.modal-open) .content-wrapper::before {
 
 .build-modal-content {
     position: relative;
-    background: linear-gradient(145deg, rgba(15, 23, 42, 0.98), rgba(30, 41, 59, 0.95));
-    border-radius: 12px;
-    border: 1px solid rgba(148, 163, 184, 0.1);
-    box-shadow:
-        0 32px 64px rgba(0, 0, 0, 0.8),
-        0 0 0 1px rgba(255, 255, 255, 0.05);
+    background: linear-gradient(150deg, rgba(15, 23, 42, 0.98), rgba(2, 6, 23, 0.98));
+    border-radius: 16px;
+    border: 1px solid rgba(148, 163, 184, 0.2);
+    box-shadow: 0 24px 64px rgba(0, 0, 0, 0.45);
     max-width: 500px;
-    width: 90%;
+    width: min(500px, 100%);
     max-height: 85vh;
     overflow-y: auto;
     animation: modalSlideIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
@@ -585,15 +584,15 @@ body:not(.modal-open) .content-wrapper::before {
 
 .modal-header {
     padding: 24px 32px 20px;
-    border-bottom: 1px solid rgba(148, 163, 184, 0.1);
-    background: linear-gradient(90deg, rgba(2, 6, 23, 0.5), transparent);
+    border-bottom: 1px solid rgba(148, 163, 184, 0.08);
+    background: linear-gradient(90deg, rgba(2, 6, 23, 0.35), transparent);
 }
 
 .modal-title {
     font-family: 'Space Grotesk', sans-serif;
-    font-size: 20px;
+    font-size: 22px;
     font-weight: 700;
-    color: #e5e7eb;
+    color: #f8fafc;
     text-align: center;
     margin: 0;
 }
@@ -618,22 +617,22 @@ body:not(.modal-open) .content-wrapper::before {
 
 .build-field select {
     width: 100%;
-    height: 44px;
-    padding: 0 16px;
-    border-radius: 8px;
-    border: 1px solid rgba(148, 163, 184, 0.2);
+    height: 46px;
+    padding: 0 12px;
+    border-radius: 10px;
+    border: 1px solid rgba(148, 163, 184, 0.18);
     outline: none;
-    background: rgba(2, 6, 23, 0.8);
-    color: #e5e7eb;
+    background: linear-gradient(180deg, rgba(11, 18, 32, 0.95), rgba(7, 16, 34, 0.95));
+    color: #f8fafc;
     font-size: 14px;
+    font-weight: 500;
     font-family: 'Inter', sans-serif;
-    transition: all 0.2s ease;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 .build-field select:focus {
-    border-color: rgba(251, 191, 36, 0.5);
-    box-shadow: 0 0 0 3px rgba(251, 191, 36, 0.1);
-    background: rgba(2, 6, 23, 0.95);
+    border-color: rgba(251, 191, 36, 0.7);
+    box-shadow: 0 0 0 3px rgba(251, 191, 36, 0.14);
 }
 
 /* modalConfig - Type dropdown, inputs (dynamically rendered) */
@@ -657,23 +656,23 @@ body:not(.modal-open) .content-wrapper::before {
 #modalConfig select,
 #modalConfig input {
     width: 100%;
-    height: 44px;
-    padding: 0 16px;
-    border-radius: 8px;
-    border: 1px solid rgba(148, 163, 184, 0.2);
+    height: 46px;
+    padding: 0 12px;
+    border-radius: 10px;
+    border: 1px solid rgba(148, 163, 184, 0.18);
     outline: none;
-    background: rgba(2, 6, 23, 0.8);
-    color: #e5e7eb;
+    background: linear-gradient(180deg, rgba(11, 18, 32, 0.95), rgba(7, 16, 34, 0.95));
+    color: #f8fafc;
     font-size: 14px;
+    font-weight: 500;
     font-family: 'Inter', sans-serif;
-    transition: all 0.2s ease;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 #modalConfig select:focus,
 #modalConfig input:focus {
-    border-color: rgba(251, 191, 36, 0.5);
-    box-shadow: 0 0 0 3px rgba(251, 191, 36, 0.1);
-    background: rgba(2, 6, 23, 0.95);
+    border-color: rgba(251, 191, 36, 0.7);
+    box-shadow: 0 0 0 3px rgba(251, 191, 36, 0.14);
 }
 
 #modalConfig select:hover,
@@ -684,10 +683,17 @@ body:not(.modal-open) .content-wrapper::before {
 #modalConfig select {
     cursor: pointer;
     appearance: none;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%2394a3b8' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+    background-image:
+        linear-gradient(45deg, transparent 50%, #94a3b8 50%),
+        linear-gradient(135deg, #94a3b8 50%, transparent 50%),
+        linear-gradient(180deg, rgba(11, 18, 32, 0.95), rgba(7, 16, 34, 0.95));
+    background-position:
+        calc(100% - 18px) calc(50% - 3px),
+        calc(100% - 12px) calc(50% - 3px),
+        0 0;
+    background-size: 6px 6px, 6px 6px, 100% 100%;
     background-repeat: no-repeat;
-    background-position: right 16px center;
-    padding-right: 40px;
+    padding-right: 36px;
 }
 
 #modalConfig option {
@@ -724,50 +730,57 @@ body:not(.modal-open) .content-wrapper::before {
 
 .modal-actions button {
     flex: 1;
-    height: 44px;
-    border-radius: 8px;
-    border: none;
+    height: 46px;
+    border-radius: 10px;
+    border: 1px solid transparent;
     cursor: pointer;
-    font-weight: 600;
+    font-weight: 700;
+    font-size: 15px;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
     font-family: 'Inter', sans-serif;
     transition: all 0.2s ease;
 }
 
 .btn-secondary {
-    background: linear-gradient(135deg, rgba(51, 65, 85, 0.8), rgba(71, 85, 105, 0.6));
-    color: #e5e7eb;
+    background: linear-gradient(135deg, rgba(30, 41, 59, 0.95), rgba(51, 65, 85, 0.85));
+    color: #cbd5f5;
     border: 1px solid rgba(148, 163, 184, 0.2);
 }
 
 .btn-secondary:hover {
-    background: linear-gradient(135deg, rgba(71, 85, 105, 0.9), rgba(100, 116, 139, 0.7));
-    border-color: rgba(148, 163, 184, 0.4);
+    background: linear-gradient(135deg, rgba(51, 65, 85, 0.98), rgba(71, 85, 105, 0.9));
+    border-color: rgba(148, 163, 184, 0.35);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
 }
 
 .btn-primary {
-    background: linear-gradient(135deg, #fbbf24, #f59e0b);
-    color: #020617;
-    box-shadow: 0 4px 16px rgba(251, 191, 36, 0.3);
+    background: linear-gradient(135deg, #ef4444, #dc2626);
+    color: #ffffff;
+    border-color: rgba(239, 68, 68, 0.4);
+    box-shadow: 0 4px 16px rgba(239, 68, 68, 0.3);
     z-index: 10000;
     position: relative;
     pointer-events: auto !important;
 }
 
 .btn-primary:hover {
-    background: linear-gradient(135deg, #f59e0b, #d97706);
-    box-shadow: 0 8px 24px rgba(251, 191, 36, 0.4);
-    transform: translateY(-1px);
+    background: linear-gradient(135deg, #f87171, #ef4444);
+    border-color: rgba(239, 68, 68, 0.6);
+    box-shadow: 0 8px 24px rgba(239, 68, 68, 0.4);
+    transform: translateY(-2px);
 }
 
 .modal-close {
     position: absolute;
-    top: 16px;
-    right: 16px;
-    width: 32px;
-    height: 32px;
+    top: 14px;
+    right: 14px;
+    width: 34px;
+    height: 34px;
     border-radius: 50%;
-    border: none;
-    background: rgba(148, 163, 184, 0.1);
+    border: 1px solid rgba(148, 163, 184, 0.16);
+    background: rgba(15, 23, 42, 0.7);
     color: #94a3b8;
     cursor: pointer;
     display: flex;
@@ -779,6 +792,7 @@ body:not(.modal-open) .content-wrapper::before {
 
 .modal-close:hover {
     background: rgba(239, 68, 68, 0.2);
+    border-color: rgba(239, 68, 68, 0.35);
     color: #ef4444;
 }
 

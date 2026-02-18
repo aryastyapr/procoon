@@ -3,8 +3,8 @@
 // =========================
 
 if (!window.saveData) {
-    alert("Save data not found");
-    location.href = "mainmenu.html";
+    showAlertModal("Save data not found", "Missing Save").then(() => location.href = "mainmenu.html");
+    throw new Error("Save data missing");
 }
 window.uiLocked = false;
 
@@ -109,7 +109,7 @@ function calculateLandMarketValue(location) {
     const totalM2 = location.total * 10_000;
     const marketValue = priceDetail.finalPrice * totalM2;
 
-    // Inisialisasi cost jika tidak ada (old save)
+    // Initialize cost if missing (old save)
     let purchaseCost = location.cost;
     if (!purchaseCost || purchaseCost <= 0) {
         purchaseCost = priceDetail.finalPrice * totalM2;
@@ -161,8 +161,8 @@ const ownedLocations = saveData.land.locations.filter(loc => {
 if (ownedLocations.length === 0) {
     container.innerHTML = `
         <div class="assets-empty">
-            Anda tidak memiliki lahan yang bisa dikelola.<br>
-            Silakan cari dan beli lahan terlebih dahulu.
+            You do not have any manageable land yet.<br>
+            Please search and buy land first.
         </div>
     `;
     return;
@@ -224,10 +224,10 @@ let text = `🕒 Selling ${(order.m2 / 10000).toFixed(2)} ha in ${remaining} day
                 }
 
                 return `
-                    <div class="asset-status" style="color:${color}">
+                    <div class="asset-status land-status" style="--status-color:${color}">
                         ${text}
                         <button
-                            style="margin-left:8px;font-size:11px;cursor:pointer;"
+                            class="status-cancel-btn"
                             onclick="cancelLandSell(${realIdx})">
                             Cancel
                         </button>
@@ -237,32 +237,46 @@ let text = `🕒 Selling ${(order.m2 / 10000).toFixed(2)} ha in ${remaining} day
         }
 
         const card = document.createElement("div");
-        card.className = "asset-card";
+        card.className = "asset-card land-item-card";
 
         const market = calculateLandMarketValue(loc);
-        let marketHTML = `<em style="opacity:0.6">Market data unavailable</em>`;
+        let marketHTML = `<div class="helper-note">Market data unavailable</div>`;
 
         if (market) {
             const color = market.diff >= 0 ? "#22c55e" : "#ef4444";
             const sign = market.diff >= 0 ? "+" : "";
 
             marketHTML = `
-                <div style="margin-top:8px">
-                    <strong>Est. Market Value</strong><br>
-                    ${formatRupiah(market.marketValue)}<br>
-                    <span style="color:${color}">
+                <div class="land-market">
+                    <div class="land-market-title">Est. Market Value</div>
+                    <div class="land-market-value">${formatRupiah(market.marketValue)}</div>
+                    <div class="land-market-change" style="color:${color}">
                         ${sign}${market.percent.toFixed(1)}%
-                    </span>
+                    </div>
                 </div>
             `;
         }
 
         card.innerHTML = `
-            <h3>${loc.name}</h3>
+            <div class="card-head">
+                <h3 class="card-title">${loc.name}</h3>
+                <span class="card-chip">LAND</span>
+            </div>
 
-            <span>Total: ${loc.total.toFixed(2)} ha</span><br>
-            <span>Used: ${loc.used.toFixed(2)} ha</span><br>
-            <span>Available: ${available.toFixed(2)} ha</span>
+            <div class="metrics-grid">
+                <div class="metric">
+                    <span class="metric-label">Total</span>
+                    <strong class="metric-value">${loc.total.toFixed(2)} ha</strong>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">Used</span>
+                    <strong class="metric-value">${loc.used.toFixed(2)} ha</strong>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">Available</span>
+                    <strong class="metric-value">${available.toFixed(2)} ha</strong>
+                </div>
+            </div>
 
             ${marketHTML}
             ${landSellAlertHTML}
@@ -283,12 +297,12 @@ btn.className = "sell-land-btn";
 btn.dataset.city = loc.name;
 
 if (available <= 0) {
-    // ❌ Tidak bisa dijual
+    // ❌ Cannot be sold
     btn.disabled = true;
     btn.style.opacity = "0.5";
-    btn.title = "Tidak ada lahan kosong yang bisa dijual";
+    btn.title = "No available land can be sold";
 } else {
-    // ✅ Bisa dijual
+    // ✅ Can be sold
     btn.onclick = function (e) {
         e.preventDefault();
         e.stopPropagation();
@@ -304,23 +318,23 @@ card.appendChild(actions);
 }
 
 function openLandSellModal(cityName) {
-    console.log("Membuka modal untuk:", cityName); 
+    console.log("Opening modal for:", cityName); 
 
     const modal = document.getElementById("assetModal");
     const title = document.getElementById("assetModalTitle");
     const body = document.getElementById("assetModalBody");
     const actions = document.getElementById("assetModalActions");
 
-    // FIX: Pastikan elemen modal ada dulu sebelum lanjut
+    // FIX: Ensure modal elements exist before continuing
     if (!modal || !title || !body || !actions) {
-        console.error("Elemen modal tidak ditemukan di HTML!");
+        console.error("Modal elements not found in HTML!");
         return;
     }
 
     const location = saveData.land.locations.find(l => l.name.toLowerCase() === cityName.toLowerCase());
 
     if (!location) {
-        alert("Data lokasi error: Tidak ditemukan di save data.");
+        showAlertModal("Location data error: Not found in save data.", "Data Error");
         return;
     }
 
@@ -328,25 +342,25 @@ function openLandSellModal(cityName) {
         .filter(o => o.cityName.toLowerCase() === cityName.toLowerCase() && o.status === "listed")
         .reduce((s,o) => s + (o.m2 / 10000), 0);
 
-    // FIX: Gunakan parseFloat & toFixed untuk menghindari bug desimal (misal 0.000000001)
+    // FIX: Use parseFloat & toFixed to avoid decimal precision bugs (e.g. 0.000000001)
     let available = parseFloat((location.total - location.used - reserved).toFixed(2));
 
-    console.log("Lahan tersedia:", available);
+    console.log("Available land:", available);
 
     if (available <= 0) {
-    showToast("🚫 Tidak ada lahan kosong yang bisa dijual", "warning", 3500);
+    showToast("🚫 No available land can be sold", "warning", 3500);
     return;
 }
 
     // Render Modal
     title.innerText = `Sell Land — ${cityName}`;
     
-    // Kita reset input price yang mungkin nyangkut dari property modal
+    // Reset price input that might carry over from property modal
     const priceInput = document.getElementById("assetPriceInput");
     if(priceInput) priceInput.style.display = "none";
     
     if (available <= 0) {
-    alert("No available land to sell in this location.");
+    showAlertModal("No available land to sell in this location.", "No Availability");
     return;
 }
 
@@ -580,7 +594,7 @@ function simulateSellPerUnit(asset, pricePerUnit) {
         return {
             fail: true,
             reason:
-                "Harga benar-benar tidak realistis. Properti ini tidak akan pernah laku di kondisi pasar saat ini."
+                "The price is completely unrealistic. This property will not sell under current market conditions."
         };
     }
 
@@ -592,7 +606,7 @@ function simulateSellPerUnit(asset, pricePerUnit) {
             days: 1,
             risk: "Fire Sale",
             note:
-                "Harga jauh di bawah pasar. Laku instan, tetapi menghancurkan capital value."
+                "Price is far below market. It sells instantly, but destroys capital value."
         };
     }
 
@@ -604,7 +618,7 @@ function simulateSellPerUnit(asset, pricePerUnit) {
             days: 3 + Math.floor(Math.random() * 4), // 3–6
             risk: "Fast Sell",
             note:
-                "Harga menarik. Terjual cepat, namun ada opportunity cost."
+                "Attractive price. Sells quickly, but there is opportunity cost."
         };
     }
 
@@ -613,7 +627,7 @@ function simulateSellPerUnit(asset, pricePerUnit) {
             days: 10 + Math.floor(Math.random() * 7), // 10–17
             risk: "Healthy",
             note:
-                "Harga sesuai pasar. Likuiditas wajar."
+                "Market-aligned pricing. Liquidity is healthy."
         };
     }
 
@@ -625,7 +639,7 @@ function simulateSellPerUnit(asset, pricePerUnit) {
             days: 30 + Math.floor(Math.random() * 20), // 30–50
             risk: "Slow",
             note:
-                "Sedikit di atas pasar. Waktu jual mulai membengkak."
+                "Slightly above market. Selling time starts to inflate."
         };
     }
 
@@ -637,7 +651,7 @@ function simulateSellPerUnit(asset, pricePerUnit) {
             days: 90 + Math.floor(Math.random() * 40), // 70–110
             risk: "High Risk",
             note:
-                "Harga terlalu optimistis. Kapital menganggur lama."
+                "Price is too optimistic. Capital stays idle for too long."
         };
     }
 
@@ -649,7 +663,7 @@ function simulateSellPerUnit(asset, pricePerUnit) {
             days: 180 + Math.floor(Math.random() * 60), // 180–200
             risk: "Very High Risk",
             note:
-                "Sangat mahal. Aset ini hampir tidak likuid."
+                "Very expensive. This asset is nearly illiquid."
         };
     }
 
@@ -660,7 +674,7 @@ function simulateSellPerUnit(asset, pricePerUnit) {
         days: 365 + Math.floor(Math.random() * 120), // 240–360
         risk: "Dead Market",
         note:
-            "Harga ekstrem. Properti bisa idle hampir setahun."
+            "Extreme pricing. The property may stay idle for almost a year."
     };
 }
 
@@ -718,12 +732,23 @@ function renderPropertyAssets() {
         asset.finance ||= { mode: "idle" };
 
         const card = document.createElement("div");
-        card.className = "asset-card";
+        card.className = "asset-card property-item-card";
 
         card.innerHTML = `
-            <h3>${asset.name} – ${asset.variant}</h3>
-            <p>Units: ${asset.units}</p>
-            <p>Land Used: ${asset.landUsed.toFixed(2)} ha</p>
+            <div class="card-head">
+                <h3 class="card-title">${asset.name} – ${asset.variant}</h3>
+                <span class="card-chip">PROPERTY</span>
+            </div>
+            <div class="metrics-grid">
+                <div class="metric">
+                    <span class="metric-label">Units</span>
+                    <strong class="metric-value">${asset.units}</strong>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">Land Used</span>
+                    <strong class="metric-value">${asset.landUsed.toFixed(2)} ha</strong>
+                </div>
+            </div>
         `;
 
         // SELL LISTING STATUS
@@ -746,7 +771,7 @@ function renderPropertyAssets() {
             }
 
             card.innerHTML += `
-                <div class="asset-status" style="color:${alertColor}">
+                <div class="asset-status land-status" style="--status-color:${alertColor}">
                     ${alertText}
                 </div>
             `;
@@ -771,7 +796,7 @@ function renderPropertyAssets() {
                 `;
             } else {
                 actions.innerHTML = `
-                    <p style="font-size:12px;color:#f87171">
+                    <p class="property-warning">
                         ⚠ Property scale too small for rental market.<br>
                         Minimum rental requirement not met.
                     </p>
@@ -783,24 +808,23 @@ function renderPropertyAssets() {
             const dailyIncome = calculateDailyIncome(asset);
             const dailyExpense = calculateDailyExpense(asset);
             const netDaily = dailyIncome - dailyExpense;
+            const monthlyIncome = dailyIncome * 30;
+            const monthlyExpense = dailyExpense * 30;
+            const netMonthly = netDaily * 30;
 
             card.innerHTML += `
                 <div class="asset-status">
-                    <strong>RENTED</strong><br>
-                    Rent / unit / month: ${formatRupiah(asset.finance.rentPrice)}<br>
-                    Occupied units: ${asset.finance.occupiedUnits}/${asset.units}<br>
-
-                    <span style="color:#22c55e">
-                        Income / day: ${formatRupiah(dailyIncome)}
-                    </span><br>
-
-                    <span style="color:#ef4444">
-                        Expense / day: ${formatRupiah(dailyExpense)}
-                    </span><br>
-
-                    <strong style="color:${netDaily >= 0 ? "#22c55e" : "#ef4444"}">
-                        Net / day: ${formatRupiah(netDaily)}
-                    </strong>
+                    <div class="status-line"><span>Status</span><strong>RENTED</strong></div>
+                    <div class="status-line"><span>Rent / unit / month</span><strong>${formatRupiah(asset.finance.rentPrice)}</strong></div>
+                    <div class="status-line"><span>Occupied</span><strong>${asset.finance.occupiedUnits}/${asset.units}</strong></div>
+                    <div class="status-divider" aria-hidden="true"></div>
+                    <div class="status-line"><span>Income / day</span><strong class="is-positive">${formatRupiah(dailyIncome)}</strong></div>
+                    <div class="status-line"><span>Expense / day</span><strong class="is-negative">${formatRupiah(dailyExpense)}</strong></div>
+                    <div class="status-line"><span>Net / day</span><strong class="${netDaily >= 0 ? "is-positive" : "is-negative"}">${formatRupiah(netDaily)}</strong></div>
+                    <div class="status-divider" aria-hidden="true"></div>
+                    <div class="status-line"><span>Income / month</span><strong class="is-positive">${formatRupiah(monthlyIncome)}</strong></div>
+                    <div class="status-line"><span>Expense / month</span><strong class="is-negative">${formatRupiah(monthlyExpense)}</strong></div>
+                    <div class="status-line"><span>Net / month</span><strong class="${netMonthly >= 0 ? "is-positive" : "is-negative"}">${formatRupiah(netMonthly)}</strong></div>
                 </div>
             `;
 
@@ -828,7 +852,7 @@ function openAssetModal(index, mode) {
     };
 
     if (asset.finance?.sell?.status === "listed") {
-        alert("Property is currently listed for sale.\nCancel listing to perform other actions.");
+        showAlertModal("Property is currently listed for sale.\nCancel listing to perform other actions.", "Action Locked");
         return;
     }
 
@@ -861,12 +885,12 @@ function openAssetModal(index, mode) {
     body.innerHTML = `
         <p>Market reference / unit: <b>${formatRupiah(marketUnit)}</b></p>
         <div id="sellSimResult" style="font-size:13px;color:#cbd5f5">
-    Masukkan harga jual per unit untuk melihat:
+    Enter a selling price per unit to see:
     <ul style="margin:6px 0 0 16px">
-        <li>Total nilai jual</li>
-        <li>Profit / rugi</li>
+        <li>Total sell value</li>
+        <li>Profit / loss</li>
         <li>ROI</li>
-        <li>Risiko & waktu terjual</li>
+        <li>Risk & estimated time to sell</li>
     </ul>
 </div>
     `;
@@ -882,7 +906,7 @@ function openAssetModal(index, mode) {
 
     const simBox = document.getElementById("sellSimResult");
     if (!price || price <= 0) {
-        simBox.innerText = "Harga tidak valid.";
+        simBox.innerText = "Invalid price.";
         return;
     }
 
@@ -991,7 +1015,7 @@ function openAssetModal(index, mode) {
     if (mode === "rent" || mode === "adjustRent") {
         input.style.pointerEvents = "auto";
         if (mode === "rent" && !canRentAsset(asset)) {
-            alert("Property tidak memenuhi skala minimum untuk disewakan.");
+            showAlertModal("Property does not meet the minimum scale for rental.", "Rental Not Allowed");
             closeAssetModal();
             return;
         }
@@ -999,7 +1023,7 @@ function openAssetModal(index, mode) {
 
         const key = getRentKey(asset)
         const cfg = RENT_MARKET_CONFIG[key];
-        if (!cfg) { alert(`RENT CONFIG MISSING: ${key}`); return; }
+        if (!cfg) { showAlertModal(`RENT CONFIG MISSING: ${key}`, "Config Missing"); return; }
 
         input.style.display = "block";
         input.value = formatRupiahInput(assetModalState.price);
@@ -1061,7 +1085,7 @@ function confirmAssetAction() {
     if (mode === "rent" || mode === "adjustRent") {
         const sim = simulateRent(asset, price);
         if (!sim) {
-            alert("Rent simulation failed");
+            showAlertModal("Rent simulation failed", "Simulation Error");
             return;
         }
         
@@ -1094,13 +1118,13 @@ function confirmSellPerUnit() {
     );
 
     if (!pricePerUnit || pricePerUnit <= 0) {
-        alert("Harga per unit tidak valid.");
+        showAlertModal("Invalid price per unit.", "Price Error");
         return;
     }
 
     const sim = simulateSellPerUnit(asset, pricePerUnit);
     if (sim.fail) {
-        alert(sim.reason);
+        showAlertModal(sim.reason, "Unable to Sell");
         return;
     }
 
@@ -1139,12 +1163,12 @@ function confirmLandSell(cityName) {
     );
 
     if (!m2 || m2 < 500) {
-        alert("Minimum sell is 500 m².");
+        showAlertModal("Minimum sell is 500 m².", "Minimum Area");
         return;
     }
 
     if (!pricePerM2 || pricePerM2 <= 0) {
-        alert("Invalid price.");
+        showAlertModal("Invalid price.", "Price Error");
         return;
     }
 
@@ -1152,7 +1176,7 @@ function confirmLandSell(cityName) {
     const ratio = pricePerM2 / detail.finalPrice;
 
     if (ratio > 1.3) {
-        alert("Unrealistic pricing. No buyers.");
+        showAlertModal("Unrealistic pricing. No buyers.", "Price Too High");
         return;
     }
 
@@ -1180,7 +1204,7 @@ function confirmLandSell(cityName) {
 }
 
 
-// FUNGSI INI YANG HILANG SEBELUMNYA
+// This function was previously missing
 function cancelLandSell(index) {
     if (!saveData.land.sellQueue || !saveData.land.sellQueue[index]) return;
     
@@ -1224,7 +1248,7 @@ registerGameTick(() => {
     if (window.uiLocked) return;
     renderTopBar();
     renderSummary();
-    // ❌ JANGAN render buttons setiap frame! Buttons jadi gak bisa diklik
+    // ❌ Do not render buttons every frame! Buttons become unclickable
     // renderLandByLocation();
     // renderPropertyAssets();
 });
@@ -1248,7 +1272,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 // DAILY HANDLER: PROCESS LISTINGS
 registerDailyHandler(function () {
-    // ✅ RE-RENDER buttons setiap hari (saat ada perubahan data)
+    // ✅ Re-render buttons every day (when data changes)
     setTimeout(() => {
         renderLandByLocation();
         renderPropertyAssets();
@@ -1277,12 +1301,12 @@ loc.total -= soldHa;
 // CLAMP TOTAL
 if (loc.total < 0) loc.total = 0;
 
-// 🔒 HARD RULE: USED TIDAK BOLEH > TOTAL
+// 🔒 HARD RULE: USED MUST NOT EXCEED TOTAL
 if (loc.used > loc.total) {
     loc.used = loc.total;
 }
 
-// 🔒 BERSIHKAN FLOAT
+// 🔒 CLEAN FLOAT PRECISION
 loc.total = parseFloat(loc.total.toFixed(4));
 loc.used  = parseFloat(loc.used.toFixed(4));
 

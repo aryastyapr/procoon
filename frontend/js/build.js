@@ -68,7 +68,7 @@ function checkCompletedProjects() {
 });
 
             moved = true;
-            return false; // hapus dari queue
+            return false; // remove from queue
         }
 
         return true;
@@ -216,7 +216,7 @@ function selectProperty(evt, property) {
 
     updateDetailPanel(property);
 
-    // INI YANG NGAKTIFIN TOMBOL
+    // This enables the button
     document.querySelector(".confirm-btn").disabled = false;
 }
 
@@ -224,14 +224,14 @@ function updateDetailPanel(property) {
     const cfg = PROPERTY_CONFIG[property];
     if (!cfg) return;
 
-    // ambil type default (pertama)
+    // take default type (first)
     const defaultTypeKey = Object.keys(cfg.types)[0];
     const type = cfg.types[defaultTypeKey];
 
     document.getElementById("detailName").innerText = property;
     document.getElementById("detailCategory").innerText = cfg.category;
 
-    // estimasi dasar (1 unit / 1 tower)
+    // base estimate (1 unit / 1 tower)
     document.getElementById("detailCost").innerText =
         formatRupiah(type.cost);
 
@@ -249,7 +249,7 @@ function updateDetailPanel(property) {
 
 function openSelectedBuildMenu() {
     if (!selectedProperty) {
-        alert("Select a project first");
+        showAlertModal("Select a project first", "Selection Needed");
         return;
     }
     openBuildModal(selectedProperty);
@@ -394,6 +394,7 @@ function closeQueueModal() {
 function openBuildModal(property) {
     console.log("openBuildModal called for", property);
     document.getElementById("queueModal").classList.add("hidden");
+    confirmBuildProject.locked = false;
 
     modalState.property = property;
     modalState.variant = null;
@@ -426,7 +427,7 @@ function openBuildModal(property) {
         const opt = document.createElement("option");
         opt.disabled = true;
         opt.selected = true;
-        opt.textContent = "⚠️ Tidak ada lahan tersedia";
+        opt.textContent = "⚠️ No available land";
         landSelect.appendChild(opt);
     }
 
@@ -448,7 +449,7 @@ function renderModalConfig() {
 
     let html = "";
 
-    // Cek minimum lahan
+    // Check minimum land
     if (remainingLand < cfg.minLand) {
     document.getElementById("modalConfig").innerHTML = `
         <p style="color:#f87171">
@@ -593,7 +594,7 @@ function renderModalSummary() {
     `;
 }
 
-function confirmBuildProject() {
+async function confirmBuildProject() {
     console.log("confirmBuildProject called");
     const res = calculateModalResult();
     if (!res) return;
@@ -601,65 +602,65 @@ function confirmBuildProject() {
     if (confirmBuildProject.locked) return;
     confirmBuildProject.locked = true;
 
-    if (saveData.finance.cash < res.cost)
-        return alert("Saldo tidak mencukupi");
+    try {
+        if (saveData.finance.cash < res.cost) {
+            await showAlertModal("Insufficient cash", "Not Enough Cash");
+            return;
+        }
 
-const locationId = document.getElementById("landSelect").value;
-const location = getLocationById(locationId);
+        const locationId = document.getElementById("landSelect").value;
+        const location = getLocationById(locationId);
 
-if (!location)
-    return alert("Lokasi tidak valid");
+        if (!location) {
+            await showAlertModal("Invalid location", "Location Error");
+            return;
+        }
 
-if (getLocationAvailableLand(locationId) < res.land)
-    return alert("Lahan tidak mencukupi di lokasi terpilih");
+        if (getLocationAvailableLand(locationId) < res.land) {
+            await showAlertModal("Insufficient land in selected location", "Not Enough Land");
+            return;
+        }
 
-    setTimeout(() => {
-    confirmBuildProject.locked = false;
-    }, 300);
+        // Deduct resources
+        saveData.finance.cash -= res.cost;
+        location.used += res.land;
 
+        // Sync global land
+        saveData.land.used = saveData.land.locations
+            .reduce((sum, l) => sum + l.used, 0);
 
-    // POTONG RESOURCE
-    // POTONG RESOURCE
-saveData.finance.cash -= res.cost;
-location.used += res.land;
+        const newProject = {
+            name: modalState.property,
+            variant: modalState.variant,
+            units: res.totalUnits,
+            landUsed: res.land,
+            locationId: locationId,
+            locationName: location.name,
+            cost: res.cost,
+            duration: res.days,
+            startTime: gameTime.toISOString()
+        };
 
+        saveData.constructionQueue.push(newProject);
 
-// SYNC GLOBAL LAND
-saveData.land.used = saveData.land.locations
-    .reduce((sum, l) => sum + l.used, 0);
+        localStorage.setItem("procoon_save", JSON.stringify(saveData));
+        document.getElementById("balance").innerText = formatRupiah(saveData.finance.cash);
 
+        closeBuildModal();
+        renderQueue();
 
-    const newProject = {
-    name: modalState.property,
-    variant: modalState.variant,
-    units: res.totalUnits,
-    landUsed: res.land,
-    locationId: locationId,
-    locationName: location.name,
-    cost: res.cost,
-    duration: res.days,
-    startTime: gameTime.toISOString()
-};
-
-
-saveData.constructionQueue.push(newProject);
-
-
-    localStorage.setItem("procoon_save", JSON.stringify(saveData));
-document.getElementById("balance").innerText = formatRupiah(saveData.finance.cash);
-
-const builtProperty = modalState.property;
-const builtVariant = modalState.variant;
-
-closeBuildModal();
-renderQueue();
-
-showToast(`🏗️ ${newProject.name} (${newProject.variant}) added to construction queue`);
+        showToast(`🏗️ ${newProject.name} (${newProject.variant}) added to construction queue`);
+    } finally {
+        setTimeout(() => {
+            confirmBuildProject.locked = false;
+        }, 300);
+    }
 
 
 }
 
 function closeBuildModal() {
+    confirmBuildProject.locked = false;
     modalState = {
         property: null,
         variant: null,
@@ -670,13 +671,13 @@ function closeBuildModal() {
     document.getElementById("buildModal").classList.add("hidden");
 }
 
-function cancelProject(index) {
+async function cancelProject(index) {
     const project = saveData.constructionQueue[index];
     if (!project) return;
 
     const progress = getProgressPercent(project);
 
-    // hitung penalty
+    // calculate penalty
     let penaltyRate = 0;
     if (progress <= 50) {
         penaltyRate = 0.2; // 20%
@@ -687,26 +688,29 @@ function cancelProject(index) {
     const penalty = Math.floor(project.cost * penaltyRate);
     const refund = project.cost - penalty;
 
-    const confirmCancel = confirm(
+    const confirmCancel = await showConfirmModal(
         `Cancel this project?\n\n` +
         `Progress: ${Math.floor(progress)}%\n` +
         `Penalty: ${formatRupiah(penalty)}\n` +
-        `Refund: ${formatRupiah(refund)}`
+        `Refund: ${formatRupiah(refund)}`,
+        "Cancel Construction",
+        "Cancel Project",
+        "Keep Building"
     );
 
     if (!confirmCancel) return;
 
-    // refund uang
+    // refund cash
     saveData.finance.cash += refund;
 
-    // kembalikan lahan
+    // return land
     const location = getLocationById(project.locationId);
 if (location) {
     location.used -= project.landUsed;
     if (location.used < 0) location.used = 0;
 }
 
-    // hapus dari queue
+    // remove from queue
     saveData.constructionQueue.splice(index, 1);
 
     localStorage.setItem("procoon_save", JSON.stringify(saveData));
@@ -785,7 +789,7 @@ function confirmCancelProject(index) {
     const penalty = Math.floor(project.cost * penaltyRate);
     const refund = project.cost - penalty;
 
-    // refund uang
+    // refund cash
     saveData.finance.cash += refund;
 
     const location = getLocationById(project.locationId);
@@ -794,11 +798,11 @@ if (location) {
     if (location.used < 0) location.used = 0;
 }
 
-// SYNC GLOBAL
+// GLOBAL SYNC
 saveData.land.used = saveData.land.locations
     .reduce((sum, l) => sum + l.used, 0);
 
-    // hapus project
+    // remove project
     saveData.constructionQueue.splice(index, 1);
 
     localStorage.setItem("procoon_save", JSON.stringify(saveData));

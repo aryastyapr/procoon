@@ -52,6 +52,21 @@
 
             <!-- Main Finance Content -->
             <main class="finance-content">
+                <button
+  id="openLoanBtn"
+  style="
+    padding:10px 14px;
+    border-radius:10px;
+    border:none;
+    background:#ef4444;
+    color:white;
+    font-weight:600;
+    cursor:pointer;
+  "
+>
+  💳 Take Loan
+</button>
+
                 <!-- Financial Summary Section -->
                 <section class="finance-summary" aria-labelledby="finance-summary-title">
                     <h2 id="finance-summary-title" class="sr-only">Financial Summary</h2>
@@ -147,6 +162,11 @@
                                 <strong id="monthlyNet">Rp 0</strong>
                             </div>
                         </div>
+
+                        <div class="report-block report-summary">
+                            <h4>Monthly Summary</h4>
+                            <div id="monthlySummary"></div>
+                        </div>
                     </div>
 
                     <!-- Yearly Report Tab Panel -->
@@ -172,16 +192,119 @@
                                 <strong id="yearlyNet">Rp 0</strong>
                             </div>
                         </div>
+
+                        <div class="report-block report-summary">
+                            <h4>Yearly Summary</h4>
+                            <div id="yearlySummary"></div>
+                        </div>
                     </div>
+                    
                 </section>
             </main>
         </div>
     </div>
 
+    <div id="loanModal" class="hidden loan-modal-overlay">
+  <div class="loan-modal">
+    <h3>🏦 Bank Loan Application</h3>
+    
+    <div class="loan-modal-body">
+        <div class="form-group">
+            <label>Loan Amount (Rp)</label>
+            <input id="loanAmount" type="text" value="" placeholder="Min. 100.000.000">
+        </div>
+
+        <div class="loan-row">
+            <div class="loan-col">
+                <label>Term (Duration)</label>
+                <select id="loanTenor">
+                    <option value="1">1 Year (7% p.a.)</option>
+                    <option value="2">2 Years (10% p.a.)</option>
+                    <option value="3">3 Years (15% p.a.)</option>
+                    <option value="4">4 Years (18% p.a.)</option>
+                    <option value="5" selected>5 Years (21% p.a.)</option>
+                </select>
+            </div>
+
+            <div id="creditLimitDisplay" class="credit-limit-display"></div>
+        </div>
+
+        <div id="loanInfo" class="loan-info"></div>
+
+        <div class="auto-pay-section">
+            <label>
+                <input type="checkbox" id="loanAutoPayToggle">
+                <span><strong>✓ Enable Auto-Payment</strong></span>
+            </label>
+            <p>Auto-payment runs every 5th with buffer protection (cash ≥ installment + 3× daily income).</p>
+        </div>
+
+        <div id="loanHelp" class="loan-help">💡 Enter the amount using dot thousand separators (example: 1.000.000.000)</div>
+    </div>
+
+    <div class="loan-actions">
+      <button class="btn ghost" onclick="closeLoanModal()">Cancel</button>
+      <button class="btn danger" onclick="confirmLoan()">Take Loan</button>
+    </div>
+  </div>
+</div>
+
+    <div id="loanPaymentModal" class="hidden loan-modal-overlay">
+  <div class="loan-modal">
+    <h3>💸 Manual Loan Payment</h3>
+    
+    <div class="loan-modal-body">
+        <div class="payment-info-box">
+            <div class="payment-row">
+                <span>Loan ID</span>
+                <strong id="paymentLoanCode">-</strong>
+            </div>
+            <div class="payment-row">
+                <span>Installment / month</span>
+                <strong id="paymentMonthlyBill">Rp 0</strong>
+            </div>
+            <div class="payment-row">
+                <span>Remaining term</span>
+                <strong id="paymentRemainingTenor">0 months</strong>
+            </div>
+            <div class="payment-row">
+                <span>Current cash</span>
+                <strong id="paymentCurrentCash">Rp 0</strong>
+            </div>
+        </div>
+
+        <div id="overdueListContainer" style="display:none; margin-top:16px;"></div>
+
+        <div class="section-divider"></div>
+
+        <div class="form-group">
+                        <label>Months to Pay</label>
+            <input id="paymentMonths" type="number" min="1" step="1" value="1">
+        </div>
+
+        <div class="payment-total-box">
+            <div class="payment-row">
+                                <span>TOTAL PAYMENT</span>
+                <strong id="paymentTotalBill">Rp 0</strong>
+            </div>
+            <div id="paymentWarning" class="payment-warning hidden"></div>
+        </div>
+    </div>
+
+    <div class="loan-actions">
+            <button class="btn ghost" onclick="closeLoanPaymentModal()">Cancel</button>
+            <button id="confirmLoanPaymentBtn" class="btn danger" onclick="confirmLoanPayment()">Pay Now</button>
+    </div>
+  </div>
+</div>
+
+
+
     <!-- Toast Notifications -->
     <div id="toastContainer" class="toast-container" aria-live="polite" aria-atomic="true"></div>
 
     <!-- JavaScript -->
+    <script src="../js/uiModal.js"></script>
     <script src="../js/gameState.js"></script>
     <script src="../js/gameUtils.js"></script>
     <script src="../js/timeSystem.js"></script>
